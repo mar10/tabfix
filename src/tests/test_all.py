@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# (c) 2010-2011 Martin Wendt; see http://tabfix.googlecode.com/
+# (c) 2010-2013 Martin Wendt; see https://github.com/mar10/tabfix
 # Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 """
 Unit tests for this package.
@@ -9,7 +9,9 @@ from zipfile import ZipFile
 import unittest
 import os
 import shutil
+import sys
 from tabfix import main, cmd_walker
+
 
 
 class TestCase1(unittest.TestCase):
@@ -39,7 +41,7 @@ class TestCase1(unittest.TestCase):
         
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
-        self.assertEqual(data.get("files_processed"), 2)
+        self.assertEqual(data.get("files_processed"), 3)
         self.assertEqual(data.get("files_modified"), 2)
 
     def test_2(self):
@@ -51,10 +53,25 @@ class TestCase1(unittest.TestCase):
         
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
-        self.assertEqual(data.get("files_processed"), 2)
+        self.assertEqual(data.get("files_processed"), 5)
         self.assertEqual(data.get("files_modified"), 2)
 
 
 def test_suite():
     suite = unittest.makeSuite(TestCase1)
     return suite
+
+
+if __name__ == "__main__":
+    print(sys.version)
+    unittest.main()
+
+#    suite = unittest.TestSuite()
+##    suite.addTest(FtpTest("test_upload_fs_fs"))
+##    suite.addTest(FtpTest("test_download_fs_fs"))
+#    suite.addTest(FtpTest("test_upload_fs_ftp"))
+#    suite.addTest(FtpTest("test_download_fs_ftp"))
+##    suite.addTest(PlainTest("test_json"))
+##    suite.addTest(PlainTest("test_make_target"))
+##    suite.addTest(FtpTest("test_readwrite"))
+#    unittest.TextTestRunner(verbosity=1).run(suite)

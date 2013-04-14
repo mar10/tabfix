@@ -1,1 +1,0 @@
-# This files uses CR as line separator (Mac style)Line 1Line 2    indent 2.1        indent 2.1.1    indent 2.1Line 3

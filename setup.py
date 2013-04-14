@@ -7,8 +7,8 @@ RELEASE = False
 from setuptools import setup, find_packages
 
 # Get description and __version__ without using import
-readme = open("README.txt", "rt").read()
-changes = open("CHANGES.txt", "rt").read()
+readme = open("README.md", "rt").read()
+changes = open("CHANGES.md", "rt").read()
 g_dict = {}
 exec(open("tabfix/_version.py").read(), g_dict)
 version = g_dict["__version__"]
@@ -26,7 +26,7 @@ setup(name="tabfix",
       author_email = "tabfix@wwwendt.de",
       maintainer = "Martin Wendt",
       maintainer_email = "tabfix@wwwendt.de",
-      url = "http://tabfix.googlecode.com/",
+      url = "https://github.com/mar10/tabfix",
       description = "Cleanup whitespace in text files",
 #      long_description = main.__doc__,
       long_description = readme + "\n\n" + changes,
@@ -36,7 +36,7 @@ setup(name="tabfix",
         #Development Status :: 4 - Beta
         #Development Status :: 5 - Production/Stable
 
-      classifiers = ["Development Status :: 4 - Beta",
+      classifiers = ["Development Status :: 2 - Pre-Alpha",
                      "Environment :: Console",
                      "Intended Audience :: Information Technology",
                      "Intended Audience :: Developers",

@@ -1,4 +1,4 @@
-# (c) 2010 Martin Wendt; see http://tabfix.googlecode.com/
+# (c) 2010, 2013 Martin Wendt; see https://github.com/mar10/tabfix
 # Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 """
 Cleanup whitespace in text files:
@@ -8,9 +8,10 @@ Cleanup whitespace in text files:
 - Make sure the file ends with exactly one line break
 - Unify line delimiters to Unix, Windows, or Mac style
 - Optionally change indentation depth
-
-Project home: http://tabfix.googlecode.com/  
 """
+from __future__ import print_function
+from __future__ import absolute_import
+
 from optparse import OptionParser
 import os
 from .cmd_walker import WalkerOptions, addCommonOptions, checkCommonOptions,\

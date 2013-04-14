@@ -3,12 +3,15 @@
 """
 Helpers to implement a recursive file processing command line script.
 """
+from __future__ import print_function
+from __future__ import absolute_import
+
 from optparse import OptionParser
 import os
-import re
+#import re
 import shutil
 from fnmatch import fnmatch
-import string
+#import string
 import time
 from zipfile import ZipFile
 from datetime import datetime

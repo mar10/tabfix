@@ -1,0 +1,39 @@
+# This files uses CRLF as line separator (Windows style)
+# It contains trailing whitespace, trailing empty lines, and mixed tabs/spaces
+Line 1
+Line 2
+# 1-level indentation with tabs and space (assuming tabsize 4)
+    indent
+    indent
+    indent
+    indent
+    indent
+# 2-level indentation with tabs and space (assuming tabsize 4)
+        indent
+        indent
+        indent
+        indent
+        indent
+        indent
+        indent
+        indent
+# uneven indentation (2-level + 1 space)
+         indent
+         indent
+         indent
+         indent
+         indent
+         indent
+         indent
+         indent
+# embedded whitespace:
+    a  b	c 	d
+    a  b	c 	d
+# Trailing whitespace:
+Line 3
+Line 4
+# ws-only lines
+
+
+
+# trailing empty / ws-only lines
