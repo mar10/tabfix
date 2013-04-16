@@ -77,6 +77,7 @@ def fixTabs(fspec, targetFspec, opts, data):
     if not isTextFile(fspec):
         if opts.verbose >= 1:
             print("Skipping non-text file %s" % fspec) 
+        incrementData(data, "files_skipped")
         return False
     elif opts.verbose >= 1:
         print("Processing %s" % fspec) 
@@ -108,7 +109,8 @@ def fixTabs(fspec, targetFspec, opts, data):
                     break
     
             if opts.tabbify:
-                s = "\t" * (indent / opts.tabSize) + " " * (indent % opts.tabSize) + line[chars:]
+                # TODO: use '//' integer division??
+                s = "\t" * (indent // opts.tabSize) + " " * (indent % opts.tabSize) + line[chars:]
             else:
                 s = " " * indent + line[chars:]
     
@@ -147,8 +149,9 @@ def fixTabs(fspec, targetFspec, opts, data):
 
     # Open with 'b', so we can have our own line endings
     with open(targetFspec, "wb") as fout:
+        # TODO: when we optimize this ('if' before with, and remove close) , we get errors ???
         if modified:
-            print(lineSeparator.join(lines))
+#            print(lineSeparator.join(lines))
             fout.writelines(lineSeparator.join(lines))
             fout.write(lineSeparator)
         fout.close()

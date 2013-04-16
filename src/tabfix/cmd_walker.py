@@ -1,4 +1,4 @@
-# (c) 2010 Martin Wendt; see http://tabfix.googlecode.com/
+# (c) 2010, 2013 Martin Wendt; see http://tabfix.googlecode.com/
 # Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 """
 Helpers to implement a recursive file processing command line script.
@@ -8,10 +8,8 @@ from __future__ import absolute_import
 
 from optparse import OptionParser
 import os
-#import re
 import shutil
 from fnmatch import fnmatch
-#import string
 import time
 from zipfile import ZipFile
 from datetime import datetime
@@ -20,9 +18,6 @@ TEMP_SUFFIX = ".$temp"
 BACKUP_SUFFIX = ".bak"
 
 #===============================================================================
-
-#_text_characters = "".join(map(chr, range(32, 127))) + "\n\r\t\b"
-
 
 def isTextFile(filename, blocksize=512):
     # Author: Andrew Dalke
@@ -37,15 +32,7 @@ def isTextFile(filename, blocksize=512):
     if not s:  # Empty files are considered text
         return True
     return True
-#    # Get the non-text characters (maps a character to itself then
-#    # use the 'remove' option to get rid of the text characters.)
-#    t = s.translate(None, _text_characters)
-#
-#    # If more than 30% non-text characters, then
-#    # this is considered a binary file
-#    if float(len(t))/len(s) > 0.30:
-#        return False
-#    return True
+
 
 #===============================================================================
 
@@ -69,15 +56,15 @@ class WalkerOptions(object):
     cmd_walker.addCommonOptions().
     """
     def __init__(self):
-#        self.match = None
-        self.matchList = None
-        self.targetPath = None
         self.backup = True
-        self.zipBackup = False
         self.dryRun = False
-        self.recursive = False
-        self.verbose = 1
         self.ignoreErrors = False
+        self.ignoreList = None
+        self.matchList = None
+        self.recursive = False
+        self.targetPath = None
+        self.verbose = 1
+        self.zipBackup = False
 
 
 #===============================================================================
@@ -141,15 +128,27 @@ def _processPattern(path, opts, func, data):
     assert not opts.targetPath
     try:
         for f in os.listdir(path):
+            # handle --ignore
+            if opts.ignoreList:
+                ignore = False
+                for m in opts.ignoreList: 
+                    if m and fnmatch(f, m):
+                        ignore = True
+                        break
+                if ignore:
+                    continue
+            # handle --match
             match = False
             for m in opts.matchList: 
                 if m and fnmatch(f, m):
                     match = True
                     break
-            if match:
-                f = os.path.join(path, f)
-                if os.path.isfile(f):
-                    _processFile(f, opts, func, data)
+            if not match:
+                continue
+            
+            f = os.path.join(path, f)
+            if os.path.isfile(f):
+                _processFile(f, opts, func, data)
     except Exception as e:
         if opts.ignoreErrors:
             if opts.verbose >= 1:
@@ -160,16 +159,16 @@ def _processPattern(path, opts, func, data):
 
 
 def _processRecursive(path, opts, func, data):
-    # Handle recursion or file patterns
+    """Handle recursion or file patterns."""
     assert opts.recursive
     assert opts.matchList
     assert os.path.isdir(path)
     data["dirs_processed"] += 1
     _processPattern(path, opts, func, data)
     for root, dirnames, _filenames in os.walk(path):
-        for dir in dirnames:
+        for dirname in dirnames:
             data["dirs_processed"] += 1
-            _processPattern(os.path.join(root, dir), opts, func, data)
+            _processPattern(os.path.join(root, dirname), opts, func, data)
     return
 
 
@@ -178,8 +177,9 @@ def process(args, opts, func, data):
     data.setdefault("elapsed_string", "n.a.")
     data.setdefault("files_processed", 0)
     data.setdefault("files_modified", 0)
+    data.setdefault("files_skipped", 0)
     data.setdefault("exceptions", 0)
-    data.setdefault("dirs_processed", 0)
+    data.setdefault("dirs_processed", 1)
     if opts.zipBackup:
         zipFolder = os.path.abspath(args[0]) 
         assert os.path.isdir(zipFolder) 
@@ -226,6 +226,9 @@ def addCommonOptions(parser):
                       help="turn off the dry-run mode (which is ON by default), " 
                       "that would just print status messages but does not change "
                       "anything")
+    parser.add_option("-i", "--ignore",
+                      action="append", dest="ignoreList",
+                      help="skip this file name pattern (option may be repeated)")
     parser.add_option("-m", "--match",
                       action="append", dest="matchList",
                       help="match this file name pattern (option may be repeated)")
