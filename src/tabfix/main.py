@@ -53,9 +53,6 @@ def _hexString(s):
     return "[%s]" % ", ".join([ "x%02X" % ord(c) for c in s ])
 
 
-#import re
-#LINE_SPLIT_REX = re.compile(b"(\r\n|\r|\n)", re.MULTILINE)
-
 def read_text_lines(fname, newline_dict=None):
     """Read a text file as separate binary lines (works in Python 2 and 3).
     
@@ -109,160 +106,9 @@ def read_text_lines(fname, newline_dict=None):
     return
     
 
-#def to_binary(s):
-#    """Convert unicode (text strings) to binary data on Python 2 and 3."""
-#    if sys.version_info[0] < 3:
-#        # Python 2
-#        if type(s) is not str:
-#            s = s.encode("utf8") 
-#    elif type(s) is str:
-#        # Python 3
-#        s = bytes(s, "utf8")
-#    return s 
-#    
-#def to_text(s):
-#    """Convert binary data to unicode (text strings) on Python 2 and 3."""
-#    if sys.version_info[0] < 3:
-#        # Python 2
-#        if type(s) is not str:
-#            s = s.encode("utf8") 
-#    elif type(s) is str:
-#        # Python 3
-#        s = bytes(s, "utf8")
-#    return s 
-
 #===============================================================================
 # fixTabs
 #===============================================================================
-#def fixTabs(fspec, targetFspec, opts, data):
-#    """Unify leading spaces and tabs and strip trailing whitespace.
-#    
-#    Caller made sure that 
-#    - fspec exists
-#    - targetFSpec does not exist.
-#      In replace mode, a targetFSpec is a temp file. 
-#    
-#    Afterwards, if this function returns True, the caller will 
-#    - Make a backup of fspec 
-#    - If running in replace mode, move targetFSpec to fspec   
-#
-#    If this function returns False, or opts.dryRun is True, the caller will 
-#    - not make a backup
-#    - remove targetFSpec, if it exists  
-#    """
-#    # Assert what cmd_walker gives us
-#    if not os.path.isfile(fspec):
-#        ValueError("Invalid source fspec: %r" % fspec)
-#    if os.path.exists(targetFspec):
-#        ValueError("Target fspec must nt exist: %r" % targetFspec)
-#    assert os.path.abspath(fspec) != os.path.abspath(targetFspec) 
-#
-##    if opts.dryRun and opts.verbose >= 1:
-##        print "Dry-run %s" % fspec
-#
-#    if not isTextFile(fspec):
-#        if opts.verbose >= 1:
-#            print("Skipping non-text file %s" % fspec) 
-#        incrementData(data, "files_skipped")
-#        return False
-#    elif opts.verbose >= 1:
-#        print("Processing %s" % fspec) 
-#    fspec = os.path.abspath(fspec)
-#    inputTabSize = opts.inputTabSize or opts.tabSize
-#
-#    # Open with 'U', so we get file.newline 
-#    with open(fspec, "Ur") as fin:
-#        modified = False
-#        lines = []
-#        lineNo = 0
-#        changedLines = 0
-#        for line in fin:
-#            lineNo += 1
-#            # TODO: cache as constant:
-#            orgLine = line.rstrip(chr(0x0A) + chr(0x0D))
-#            line = orgLine.rstrip(" \t")
-#            s = ""
-#            indent = 0
-#            chars = 0
-#            for c in line:
-#                if c in (" ", " "): # Space, shift-space
-#                    chars += 1
-#                    indent += 1
-#                elif c == "\t":
-#                    chars += 1
-#                    # Use integer division '//' (Py3k)
-#                    indent = inputTabSize * ((indent + inputTabSize) // inputTabSize)
-#                else:
-#                    break
-#    
-#            if opts.tabbify:
-#                # Use '//' integer division (Py3k)
-#                s = "\t" * (indent // opts.tabSize) + " " * (indent % opts.tabSize) + line[chars:]
-#            else:
-#                s = " " * indent + line[chars:]
-#    
-#            lines.append(s)
-#            if s != orgLine:
-#                modified = True
-#                changedLines += 1
-#                if opts.verbose >= 3:
-#                    print("    #%04i: %s" % (lineNo, orgLine.replace(" ", ".").replace("\t", "<tab>"))) 
-#                    print("         : %s" % s.replace(" ", ".").replace("\t", "<tab>")) 
-#        
-#        # Line delimiter of input file (None, if ambiguous)
-#        sourceLineSeparator = None
-#        try:
-#            if type(fin.newlines) is str:
-#                sourceLineSeparator = fin.newlines
-#        except Exception:  
-#            pass
-#        fin.close()
-#
-#    if opts.lineSeparator:
-#        lineSeparator = _separatorMap[opts.lineSeparator.upper()]
-#    elif sourceLineSeparator:
-#        lineSeparator = sourceLineSeparator
-#    else:
-#        lineSeparator = os.linesep
-#
-#    if sourceLineSeparator != lineSeparator:
-#        modified = True
-#        if opts.verbose >= 2:
-#            print("    Changing line separator to %s" % (_hexString(lineSeparator)))
-#    # Strip trailing empty lines
-#    while len(lines) > 1 and lines[-1] == "":
-#        modified = True
-#        lines.pop()
-#
-#    # Open with 'b', so we can have our own line endings
-#    with open(targetFspec, "wb") as fout:
-#        # TODO: when we optimize this ('if' before with, and remove close) , we get errors ???
-#        if modified:
-#            print("%r" % lineSeparator.join(lines))
-#            a = lineSeparator.join(lines)
-#            b = a.encode("utf8")
-##            fout.writelines(bytes(lineSeparator.join(lines), "utf8"))
-#            fout.write(lineSeparator.join(lines))
-#            fout.write(lineSeparator)
-#        fout.close()
-#    
-#    srcSize = os.path.getsize(fspec)
-#    targetSize = os.path.getsize(targetFspec)
-#    incrementData(data, "bytes_read", srcSize)
-#    incrementData(data, "bytes_written", targetSize)
-#    incrementData(data, "lines_modified", changedLines)
-#    
-#    if modified:
-#        if opts.verbose >= 2:
-#            print("    Changed %s lines (size %s -> %s bytes)" % (changedLines, srcSize, targetSize))
-#    else:
-#        if opts.verbose >= 2:
-#            print("    Unmodified.")
-#    
-#    # Return false, if nothing changed.
-#    # In this case cmd_walker discards the output file
-#    return modified
-
 
 def fixTabs(fspec, targetFspec, opts, data):
     """Unify leading spaces and tabs and strip trailing whitespace.
@@ -307,13 +153,13 @@ def fixTabs(fspec, targetFspec, opts, data):
     # Read lines as binary strings (keeping original endings)
     stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
     for line in read_text_lines(fspec, stats):
-        print("%r" % line)
+#        print("%r" % line)
         lineNo += 1
         # Note: this strips '\r' and/or '\n'
         orgLine = line.rstrip(DELIM_CRLF)
         # TODO: add shift-space
         line = orgLine.rstrip(b" \t")
-        print("%r" % line)
+#        print("%r" % line)
         s = b""
         indent = 0
         chars = 0
@@ -341,8 +187,8 @@ def fixTabs(fspec, targetFspec, opts, data):
 
         lines.append(s)
         if s != orgLine:
-            print("    old: %r" % orgLine)
-            print("    new: %r" % s)
+#            print("    old: %r" % orgLine)
+#            print("    new: %r" % s)
             modified = True
             changedLines += 1
             if opts.verbose >= 3:

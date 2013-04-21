@@ -11,10 +11,10 @@ Cloned on GitHub from the Google Code version
 **Be careful with existing shell scripts after updating from v.0.x!** 
 
 ### Done
+  - Support for Python 2.6+ and 3.2+
   - `-i`, `--ignore` option was added to allow exclusion patterns.
 
 ### Planned
-  - Support for Python 2.6+ and 3.2+
   - `-x`, `--execute` option was removed. It is now on by default.
     Use `--dry-run` to force simulation mode.
   - `--no-backup` option was removed. It is now on by default.

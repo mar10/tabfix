@@ -1,4 +1,4 @@
-# (c) 2010, 2013 Martin Wendt; see http://tabfix.googlecode.com/
+# (c) 2010, 2013 Martin Wendt; see https://github.com/mar10/tabfix
 # Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 """
 Helpers to implement a recursive file processing command line script.

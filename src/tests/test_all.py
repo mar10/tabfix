@@ -204,7 +204,13 @@ class TestBasic(unittest.TestCase):
         self.assertTrue(res[0].endswith(DELIM_LF))
         self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 6, DELIM_CRLF: 0 })
         
-        read_text_lines("test_mixed.txt")        
+        stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
+        res = read_text_lines("test_mixed.txt", stats)
+        res = list(res)
+        self.assertEqual(len(res), 45)
+        self.assertEqual(type(res[0]), type(b""))
+        self.assertTrue(res[0].endswith(DELIM_CRLF))
+        self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 44 })
         
 
 if __name__ == "__main__":
