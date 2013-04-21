@@ -12,7 +12,7 @@ import os
 import shutil
 import sys
 from tabfix import main, cmd_walker
-from unittest.suite import TestSuite
+#from unittest.suite import TestSuite
 from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
 
 IS_PY3 = (sys.version_info[0] >= 3) 
