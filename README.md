@@ -1,11 +1,6 @@
-tabfix
-======
+# tabfix [![Build Status](https://travis-ci.org/mar10/tabfix.png?branch=master)](https://travis-ci.org/mar10/tabfix)
 
-Cleanup whitespace in text files.
-
-tabfix
-======
-Copyright (c) 2010, 2011 Martin Wendt
+Copyright (c) 2010, 2013 Martin Wendt
 
 Cleanup whitespace in text files:
 
