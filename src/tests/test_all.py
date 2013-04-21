@@ -12,9 +12,35 @@ import os
 import shutil
 import sys
 from tabfix import main, cmd_walker
+from unittest.suite import TestSuite
+from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
 
+IS_PY3 = (sys.version_info[0] >= 3) 
 
 USE_FIXED_FOLDER = True
+
+#class TextFileReader(object):
+#    def __init__(self, fname):
+#        if sys.version_info[0] >= 3:
+#            # Python 3: read binary, because we don't know the encoding.
+#            # We still want line-breaks, so U is added.
+#            # NOTE: '\n' and '\r\n' are recognized, but '\r' NOT
+#            mode = "Urb"
+#            self.f = open(fname, "Urb")
+#        else:
+#            # Python 2: we get 
+#            self.f = open(fname, "Urt")
+#    def read_text_as_binary(self, fname):
+#        """"""
+#        is_py3 = (sys.version_info[0] >= 3) 
+#        if is_py3:
+#            # Python 3: read binary, because we don't know the encoding.
+#            # We still want line-breaks, so U is added.
+#            # NOTE: '\n' and '\r\n' are recognized, but '\r' NOT
+#            mode = "Urb"
+#        else:
+#            # Python 2: we get 
+#            mode = "Urt"
 
 class TestBasic(unittest.TestCase):
     """Basic tests.
@@ -69,9 +95,9 @@ class TestBasic(unittest.TestCase):
                 
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
-        self.assertEqual(data.get("files_processed"), 4)
-        self.assertEqual(data.get("files_modified"), 1)
-        self.assertEqual(data.get("lines_modified"), 25)
+        self.assertEqual(data.get("files_processed"), 10)
+        self.assertEqual(data.get("files_modified"), 5)
+        self.assertEqual(data.get("lines_modified"), 125)
         self.assertTrue(os.path.isfile(os.path.join(self.temp_path, "test_files", "test_mixed.txt.bak")))
         # TODO: use difflib
         # http://docs.python.org/2/library/difflib.html
@@ -100,9 +126,9 @@ class TestBasic(unittest.TestCase):
         
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
-        self.assertEqual(data.get("files_processed"), 4)
-        self.assertEqual(data.get("files_modified"), 4)
-        self.assertEqual(data.get("lines_modified"), 36)
+        self.assertEqual(data.get("files_processed"), 10)
+        self.assertEqual(data.get("files_modified"), 8)
+        self.assertEqual(data.get("lines_modified"), 154)
         # created .bak file
         self.assertTrue(os.path.isfile(os.path.join(self.temp_path, "test_files", "test_mixed.txt.bak")))
         # TODO: use difflib
@@ -123,9 +149,8 @@ class TestBasic(unittest.TestCase):
         
         # Note: if this fails with '9 != 8', there might be a '.DS_Store' 
         # in 'test_files.zip':
-        self.assertEqual(data.get("files_processed"), 8)
-        
-        self.assertEqual(data.get("files_modified"), 3)
+        self.assertEqual(data.get("files_processed"), 14)
+        self.assertEqual(data.get("files_modified"), 7)
 
 
     def test_match_all_recursive(self):
@@ -137,7 +162,7 @@ class TestBasic(unittest.TestCase):
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
         
-        self.assertEqual(data.get("files_processed"), 16)
+        self.assertEqual(data.get("files_processed"), 22)
 
 
     def test_match_all_recursive_ignore(self):
@@ -150,14 +175,44 @@ class TestBasic(unittest.TestCase):
         data = {}
         cmd_walker.process(args, opts, main.fixTabs, data)
         
-        self.assertEqual(data.get("files_processed"), 10)
+        self.assertEqual(data.get("files_processed"), 16)
 
 
-def test_suite():
-    suite = unittest.makeSuite(TestCase1)
-    return suite
-
+    def test_read_text_lines(self):
+        
+        stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
+        res = read_text_lines("test_cr.txt", stats)
+        res = list(res)
+        self.assertEqual(len(res), 7)
+        self.assertEqual(type(res[0]), type(b""))
+        self.assertTrue(res[0].endswith(DELIM_CR))
+        self.assertEqual(stats, { DELIM_CR: 6, DELIM_LF: 0, DELIM_CRLF: 0 })
+        
+        stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
+        res = read_text_lines("test_crlf.txt", stats)
+        res = list(res)
+        self.assertEqual(len(res), 7)
+        self.assertEqual(type(res[0]), type(b""))
+        self.assertTrue(res[0].endswith(DELIM_CRLF))
+        self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 6 })
+        
+        stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
+        res = read_text_lines("test_lf.txt", stats)
+        res = list(res)
+        self.assertEqual(len(res), 7)
+        self.assertEqual(type(res[0]), type(b""))
+        self.assertTrue(res[0].endswith(DELIM_LF))
+        self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 6, DELIM_CRLF: 0 })
+        
+        read_text_lines("test_mixed.txt")        
+        
 
 if __name__ == "__main__":
     print(sys.version)
     unittest.main()
+    
+#    suite = TestSuite()
+##    suite.addTests(TestBasic)
+##    suite.addTest(TestBasic("test_read_text_lines"))
+#    suite.addTest(TestBasic("test_tabbify_txt_flat"))
+#    unittest.TextTestRunner().run(suite)

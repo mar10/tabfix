@@ -23,6 +23,8 @@ Cloned on GitHub from the Google Code version
   - Multiple target folders may be passed
   - Verbositiy was changed. By default only changed files will be printed.
   - PEP 8
+  - add `-2` option to prevent accidential usage? 
+    Oder reicht es, dass `-x` jetzt einen Fehler bringt?
   
 ## 0.1.7 and before
 Hosted on Google Code: https://code.google.com/p/tabfix/

@@ -2,6 +2,9 @@
 # It contains trailing whitespace, trailing empty lines, and mixed tabs/spaces
 Line 1
 Line 2
+# special characters
+	abc, umlaut(äöüÄÖÜ), szlig(ß), euro(€)
+	abc, umlaut(äöüÄÖÜ), szlig(ß), euro(€)
 # 1-level indentation with tabs and space (assuming tabsize 4)
 	indent
 	indent
