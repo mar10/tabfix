@@ -17,7 +17,7 @@ from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
 
 IS_PY3 = (sys.version_info[0] >= 3) 
 
-USE_FIXED_FOLDER = True
+USE_FIXED_FOLDER = False
 
 #class TextFileReader(object):
 #    def __init__(self, fname):
