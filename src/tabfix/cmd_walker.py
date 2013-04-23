@@ -2,6 +2,15 @@
 # Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 """
 Helpers to implement a recursive file processing command line script.
+
+Verbosity:
+Verbose modes (default: 3)
+    0: quiet
+    1: errors only
+    2: errors and summary
+    3: errors, changed files, and summary
+    4: errors, visited files, and summary
+    5: debug output 
 """
 from __future__ import print_function
 from __future__ import absolute_import
@@ -63,7 +72,7 @@ class WalkerOptions(object):
         self.matchList = None
         self.recursive = False
         self.targetPath = None
-        self.verbose = 1
+        self.verbose = 3
         self.zipBackup = False
 
 
@@ -218,14 +227,14 @@ def addCommonOptions(parser):
     """Return a valid options object.
     @param parser: OptionParser
     """
-#    parser.add_option("-d", "--dry-run",
-#                      action="store_true", dest="dryRun", default=False,
-#                      help="dry run: just print converted lines to screen")
-    parser.add_option("-x", "--execute",
-                      action="store_false", dest="dryRun", default=True,
-                      help="turn off the dry-run mode (which is ON by default), " 
-                      "that would just print status messages but does not change "
-                      "anything")
+    parser.add_option("-d", "--dry-run",
+                      action="store_true", dest="dryRun", default=False,
+                      help="dry run: just print status messages; don't change anything")
+#    parser.add_option("-x", "--execute",
+#                      action="store_false", dest="dryRun", default=True,
+#                      help="turn off the dry-run mode (which is ON by default), " 
+#                      "that would just print status messages but does not change "
+#                      "anything")
     parser.add_option("-i", "--ignore",
                       action="append", dest="ignoreList",
                       help="skip this file name pattern (option may be repeated)")
@@ -242,20 +251,15 @@ def addCommonOptions(parser):
     parser.add_option("", "--no-backup",
                       action="store_false", dest="backup", default=True,
                       help="prevent creation of backup files (*.bak)")
+#    parser.add_option("-q", "--quiet",
+#                      action="store_const", const=0, dest="verbose", 
+#                      help="don't print status messages to stdout (verbosity 0)")
     parser.add_option("-q", "--quiet",
-                      action="store_const", const=0, dest="verbose", 
-                      help="don't print status messages to stdout (verbosity 0)")
-#    parser.add_option("-q", "--quiet",
-#                      action="store_true", const=0, dest="quiet", default=False,
-#                      help="don't print status messages (verbose 0)")
-#    def quietCallback(option, opt_str, value, parser, *args, **kwargs):
-#        pass
-#    parser.add_option("-q", "--quiet",
-#                      action="callback", callback=quietCallback,
-#                      help="don't print status messages (verbosity 0).")
+                      action="count", default=0, dest="verboseDecrement", 
+                      help="decrease verbosity to 2 (use -qq fo 1, ...)")
     parser.add_option("-v", "--verbose",
-                      action="count", dest="verbose", default=1,
-                      help="increment verbosity to 2 (use -vv for 3, ...)")
+                      action="count", dest="verbose", default=3,
+                      help="increment verbosity to 4 (use -vv for 5, ...)")    
     parser.add_option("", "--zip-backup",
                       action="store_true", dest="zipBackup", default=False,
                       help="add backups of modified files to a zip-file")
@@ -277,6 +281,12 @@ def checkCommonOptions(parser, options, args):
     if options.matchList and not args:
         args.append(".")
 
+    if options.verboseDecrement:
+#        print(options)
+        options.verbose = max(0, options.verbose - options.verboseDecrement)
+    del options.verboseDecrement
+#    print(options)
+         
     if len(args) < 1:
         parser.error("missing required PATH")
     elif options.targetPath and len(args) != 1:

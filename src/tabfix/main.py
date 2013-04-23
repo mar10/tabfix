@@ -137,11 +137,11 @@ def fixTabs(fspec, targetFspec, opts, data):
 #        print "Dry-run %s" % fspec
 
     if not isTextFile(fspec):
-        if opts.verbose >= 1:
+        if opts.verbose >= 4:
             print("Skipping non-text file %s" % fspec) 
         incrementData(data, "files_skipped")
         return False
-    elif opts.verbose >= 1:
+    elif opts.verbose >= 4:
         print("Processing %s" % fspec) 
     fspec = os.path.abspath(fspec)
     inputTabSize = opts.inputTabSize or opts.tabSize
@@ -191,7 +191,7 @@ def fixTabs(fspec, targetFspec, opts, data):
 #            print("    new: %r" % s)
             modified = True
             changedLines += 1
-            if opts.verbose >= 3:
+            if opts.verbose >= 5:
                 print("    #%04i: %s" % (lineNo, orgLine.replace(" ", ".").replace("\t", "<tab>"))) 
                 print("         : %s" % s.replace(" ", ".").replace("\t", "<tab>")) 
     
@@ -218,13 +218,15 @@ def fixTabs(fspec, targetFspec, opts, data):
 
     if sourceLineSeparator != lineSeparator:
         modified = True
-        if opts.verbose >= 2:
+        if opts.verbose >= 4:
             print("    Changing line separator to %s" % (_hexString(lineSeparator)))
     # Strip trailing empty lines
     while len(lines) > 1 and lines[-1] == b"":
         modified = True
         lines.pop()
 
+    if modified and opts.verbose == 3:
+        print("Modified %s" % fspec)
     # Open with 'b', so we can have our own line endings
     with open(targetFspec, "wb") as fout:
         # TODO: when we optimize this ('if' before with, and remove close) , we get errors ???
@@ -242,10 +244,10 @@ def fixTabs(fspec, targetFspec, opts, data):
     incrementData(data, "lines_modified", changedLines)
     
     if modified:
-        if opts.verbose >= 2:
+        if opts.verbose >= 4:
             print("    Changed %s lines (size %s -> %s bytes)" % (changedLines, srcSize, targetSize))
     else:
-        if opts.verbose >= 2:
+        if opts.verbose >= 4:
             print("    Unmodified.")
     
     # Return false, if nothing changed.
@@ -260,7 +262,7 @@ def run():
     parser = OptionParser(usage="usage: %prog [options] [PATH]",
                           prog="tabfix", # Otherwise 'tabfix-script.py' gets displayed
                           version=__version__,
-                          epilog="See also http://tabfix.googlecode.com")
+                          epilog="See also https://github.com/mar10/tabfix")
 
     parser.add_option("-s", "--tab-size",
                       action="store", dest="tabSize", type="int", default=4,
@@ -297,17 +299,17 @@ def run():
     process(args, options, fixTabs, data)
     
     # Print summary
-    if options.verbose >= 1 and data.get("zipfile"):
+    if options.verbose >= 3 and data.get("zipfile"):
         print() 
         print(("Backup archive:\n    %s" % data.get("zipfile_fspec")))
         
-    if options.verbose >= 1:
+    if options.verbose >= 2:
         print() 
         print(("Modified %s/%s files in %s folders (elap %s)" 
               % (data["files_modified"], data["files_processed"], 
                  data["dirs_processed"], data["elapsed_string"]))) 
 
-    if options.dryRun and options.verbose >= 1:
+    if options.dryRun and options.verbose >= 2:
         print("\n*** Dry-run mode: no files have been modified!\n"
               "*** Use -x or --execute to process files.")
 

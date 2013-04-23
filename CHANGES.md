@@ -13,15 +13,15 @@ Cloned on GitHub from the Google Code version
 ### Done
   - Support for Python 2.6+ and 3.2+
   - `-i`, `--ignore` option was added to allow exclusion patterns.
-
-### Planned
   - `-x`, `--execute` option was removed. It is now on by default.
     Use `--dry-run` to force simulation mode.
+  - Verbositiy was changed. By default only changed files will be printed.
+
+### Planned
   - `--no-backup` option was removed. It is now on by default.
     Use `-b` to enable backups.
   - `-m` option now accepts a comma separated list of extensions.
   - Multiple target folders may be passed
-  - Verbositiy was changed. By default only changed files will be printed.
   - PEP 8
   - add `-2` option to prevent accidential usage? 
     Oder reicht es, dass `-x` jetzt einen Fehler bringt?

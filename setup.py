@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 readme = open("README.md", "rt").read()
 changes = open("CHANGES.md", "rt").read()
 g_dict = {}
-exec(open("tabfix/_version.py").read(), g_dict)
+exec(open("src/tabfix/_version.py").read(), g_dict)
 version = g_dict["__version__"]
 
 # 'setup.py upload' fails on Vista, because .pypirc is searched on 'HOME' path
@@ -50,16 +50,14 @@ setup(name="tabfix",
       keywords = "python indentation development tab spaces tool", 
 #      platforms=["Unix", "Windows"],
       license = "The MIT License",
-#      install_requires = ["lxml"],
+      package_dir = {"": "src"},
       packages = find_packages(exclude=["ez_setup", ]),
       
-#      py_modules = [],
-
 #      package_data={"": ["*.txt", "*.html", "*.conf"]},
       include_package_data = True, 
       zip_safe = False,
       extras_require = {},
-      test_suite = "tabfix.tests.test_all.test_suite",
+      test_suite = "tests.test_all",
       entry_points = {
           "console_scripts" : ["tabfix = tabfix.main:run"],
           },
