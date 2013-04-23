@@ -136,13 +136,15 @@ def fixTabs(fspec, targetFspec, opts, data):
 #    if opts.dryRun and opts.verbose >= 1:
 #        print "Dry-run %s" % fspec
 
+    if opts.verbose >= 4:
+        print("%s" % fspec) 
     if not isTextFile(fspec):
         if opts.verbose >= 4:
-            print("Skipping non-text file %s" % fspec) 
+            print("    Skipped non-text file.") 
         incrementData(data, "files_skipped")
         return False
-    elif opts.verbose >= 4:
-        print("Processing %s" % fspec) 
+#    elif opts.verbose >= 4:
+#        print("Processing %s" % fspec) 
     fspec = os.path.abspath(fspec)
     inputTabSize = opts.inputTabSize or opts.tabSize
 
@@ -192,8 +194,8 @@ def fixTabs(fspec, targetFspec, opts, data):
             modified = True
             changedLines += 1
             if opts.verbose >= 5:
-                print("    #%04i: %s" % (lineNo, orgLine.replace(" ", ".").replace("\t", "<tab>"))) 
-                print("         : %s" % s.replace(" ", ".").replace("\t", "<tab>")) 
+                print("        #%04i: %s" % (lineNo, orgLine.replace(" ", ".").replace("\t", "<tab>"))) 
+                print("             : %s" % s.replace(" ", ".").replace("\t", "<tab>")) 
     
     # Line delimiter of input file (`None` if ambiguous)
     ending_types = []
@@ -226,7 +228,7 @@ def fixTabs(fspec, targetFspec, opts, data):
         lines.pop()
 
     if modified and opts.verbose == 3:
-        print("Modified %s" % fspec)
+        print("%s" % fspec)
     # Open with 'b', so we can have our own line endings
     with open(targetFspec, "wb") as fout:
         # TODO: when we optimize this ('if' before with, and remove close) , we get errors ???
@@ -246,9 +248,8 @@ def fixTabs(fspec, targetFspec, opts, data):
     if modified:
         if opts.verbose >= 4:
             print("    Changed %s lines (size %s -> %s bytes)" % (changedLines, srcSize, targetSize))
-    else:
-        if opts.verbose >= 4:
-            print("    Unmodified.")
+#    elif opts.verbose >= 4:
+#        print("    Unmodified.")
     
     # Return false, if nothing changed.
     # In this case cmd_walker discards the output file

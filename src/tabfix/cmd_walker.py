@@ -227,14 +227,15 @@ def addCommonOptions(parser):
     """Return a valid options object.
     @param parser: OptionParser
     """
-    parser.add_option("-d", "--dry-run",
-                      action="store_true", dest="dryRun", default=False,
-                      help="dry run: just print status messages; don't change anything")
+    # 2013-04-23: replaced --execute with --dry-run
 #    parser.add_option("-x", "--execute",
 #                      action="store_false", dest="dryRun", default=True,
 #                      help="turn off the dry-run mode (which is ON by default), " 
 #                      "that would just print status messages but does not change "
 #                      "anything")
+    parser.add_option("-d", "--dry-run",
+                      action="store_true", dest="dryRun", default=False,
+                      help="dry run: just print status messages; don't change anything")
     parser.add_option("-i", "--ignore",
                       action="append", dest="ignoreList",
                       help="skip this file name pattern (option may be repeated)")
@@ -248,15 +249,16 @@ def addCommonOptions(parser):
                       action="store", dest="targetPath", default=None,
                       metavar="FILENAME",
                       help="name of output file")
-    parser.add_option("", "--no-backup",
-                      action="store_false", dest="backup", default=True,
-                      help="prevent creation of backup files (*.bak)")
-#    parser.add_option("-q", "--quiet",
-#                      action="store_const", const=0, dest="verbose", 
-#                      help="don't print status messages to stdout (verbosity 0)")
+    # 2013-04-23: replaced --no-backup with --backup
+#    parser.add_option("", "--no-backup",
+#                      action="store_false", dest="backup", default=True,
+#                      help="prevent creation of backup files (*.bak)")
+    parser.add_option("-b", "--backup",
+                      action="store_true", dest="backup", default=False,
+                      help="create backup files (*.bak)")
     parser.add_option("-q", "--quiet",
                       action="count", default=0, dest="verboseDecrement", 
-                      help="decrease verbosity to 2 (use -qq fo 1, ...)")
+                      help="decrease verbosity to 2 (use -qq for 1, ...)")
     parser.add_option("-v", "--verbose",
                       action="count", dest="verbose", default=3,
                       help="increment verbosity to 4 (use -vv for 5, ...)")    
