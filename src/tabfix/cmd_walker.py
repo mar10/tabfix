@@ -201,8 +201,10 @@ def process(args, opts, func, data):
     start = time.clock()
     
     if opts.recursive:
-        assert len(args) == 1
-        _process_recursive(args[0], opts, func, data)
+#        assert len(args) == 1
+#        _process_recursive(args[0], opts, func, data)
+        for path in args:
+            _process_recursive(path, opts, func, data)
     elif opts.matchList:
         assert len(args) == 1
         _process_pattern(args[0], opts, func, data)
@@ -294,8 +296,10 @@ def check_common_options(parser, options, args):
         parser.error("missing required PATH")
     elif options.targetPath and len(args) != 1:
         parser.error("-o option requires exactly one source file")
-    elif options.recursive and len(args) != 1:
-        parser.error("-r option requires exactly one source directory")
+#    elif options.recursive and len(args) != 1:
+#        parser.error("-r option requires exactly one source directory")
+    elif options.recursive and len(args) < 1:
+        parser.error("-r option requires one or more source directories")
     elif options.recursive and not options.matchList:
         parser.error("-r option requires -m")
 

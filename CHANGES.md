@@ -18,14 +18,11 @@ Cloned on GitHub from the Google Code version
     Use `-b` to enable backups.
   - `-i`, `--ignore` option was added to allow exclusion patterns.
   - Verbositiy was changed. By default only changed files will be printed.
-
-### Planned
+  - PEP 8
   - `-m` option now accepts a comma separated list of extensions.
   - Multiple target folders may be passed
-  - PEP 8
-  - add `-2` option to prevent accidential usage? 
-    Oder reicht es, dass `-x` jetzt einen Fehler bringt?
-  
+
+
 ## 0.1.7 and before
 Hosted on Google Code: https://code.google.com/p/tabfix/
 
