@@ -32,7 +32,8 @@ def isTextFile(filename, blocksize=512):
     # Author: Andrew Dalke
     # http://code.activestate.com/recipes/173220-test-if-a-file-or-string-is-text-or-binary/
     try:
-        s = open(filename, "rb").read(blocksize)
+        with open(filename, "rb") as f:
+            s = f.read(blocksize)
     except IOError:
         return False
 
