@@ -14,7 +14,7 @@ import sys
 from tabfix import main, cmd_walker
 from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
 import subprocess
-import StringIO
+#import StringIO
 #IS_PY3 = (sys.version_info[0] >= 3) 
 
 USE_FIXED_FOLDER = False
