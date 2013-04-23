@@ -241,10 +241,10 @@ def add_common_options(parser):
                       help="dry run: just print status messages; don't change anything")
     parser.add_option("-i", "--ignore",
                       action="append", dest="ignoreList",
-                      help="skip this file name pattern (option may be repeated)")
+                      help="skip this file name patterns (separate by ',' or repeat this option)")
     parser.add_option("-m", "--match",
                       action="append", dest="matchList",
-                      help="match this file name pattern (option may be repeated)")
+                      help="match this file name pattern (separate by ',' or repeat this option)")
     parser.add_option("-r", "--recursive",
                       action="store_true", dest="recursive", default=False,
                       help="visit sub directories")
@@ -277,20 +277,37 @@ def add_common_options(parser):
 
 
 def check_common_options(parser, options, args):
-    """Validate common options."""
+    """Preprocess and validate common options."""
 #    if len(args) != 1:
 #        parser.error("expected exactly one source file or folder")
+
+    # allow multiple patterns in one -m option (separated by ',')
+    match_list =  []
+    for matches in options.matchList:
+        for pattern in matches.split(","):
+            if not pattern in match_list:
+                match_list.append(pattern)
+    options.matchList = match_list
+    
+    # allow multiple patterns in one -i option (separated by ',')
+    match_list =  []
+    for matches in options.ignoreList:
+        for pattern in matches.split(","):
+            if not pattern in match_list:
+                match_list.append(pattern)
+    options.ignoreList = match_list
+    
     # TODO:
 #    if options.quiet and options.verbose:
 #        parser.error("options -q and -v are mutually exclusive")
     if options.matchList and not args:
         args.append(".")
 
+    # decrement vorbisity by 1 for every -q option
     if options.verboseDecrement:
-#        print(options)
         options.verbose = max(0, options.verbose - options.verboseDecrement)
     del options.verboseDecrement
-#    print(options)
+
          
     if len(args) < 1:
         parser.error("missing required PATH")
