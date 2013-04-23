@@ -28,7 +28,7 @@ BACKUP_SUFFIX = ".bak"
 
 #===============================================================================
 
-def isTextFile(filename, blocksize=512):
+def is_text_file(filename, blocksize=512):
     # Author: Andrew Dalke
     # http://code.activestate.com/recipes/173220-test-if-a-file-or-string-is-text-or-binary/
     try:
@@ -46,7 +46,7 @@ def isTextFile(filename, blocksize=512):
 
 #===============================================================================
 
-def incrementData(data, key, inc=1):
+def increment_data(data, key, inc=1):
     if type(data) is dict:
         if key in data:
             data[key] += inc
@@ -63,7 +63,7 @@ class WalkerOptions(object):
     
     This object, may be used instead of command line args.
     An implementation should derive its options from this base class and call
-    cmd_walker.addCommonOptions().
+    cmd_walker.add_common_options().
     """
     def __init__(self):
         self.backup = True
@@ -80,24 +80,24 @@ class WalkerOptions(object):
 #===============================================================================
 # Walker 
 #===============================================================================
-def _processFile(fspec, opts, func, data):
+def _process_file(fspec, opts, func, data):
     fspec = os.path.abspath(fspec)
     if not os.path.isfile(fspec):
         ValueError("Invalid fspec: %s" % fspec)
 
     try:
-        targetFspec = opts.targetPath or fspec
-        targetFspec = os.path.abspath(targetFspec)
+        target_fspec = opts.targetPath or fspec
+        target_fspec = os.path.abspath(target_fspec)
 
         assert not fspec.endswith(TEMP_SUFFIX)
-        assert not targetFspec.endswith(TEMP_SUFFIX)
-        tempFspec = fspec + TEMP_SUFFIX
-        if os.path.exists(tempFspec):
-            os.remove(tempFspec)
+        assert not target_fspec.endswith(TEMP_SUFFIX)
+        temp_fspec = fspec + TEMP_SUFFIX
+        if os.path.exists(temp_fspec):
+            os.remove(temp_fspec)
 
         try:
             data["files_processed"] += 1
-            res = func(fspec, tempFspec, opts, data)
+            res = func(fspec, temp_fspec, opts, data)
             if res is not False:
                 data["files_modified"] += 1
         except Exception:
@@ -107,32 +107,32 @@ def _processFile(fspec, opts, func, data):
         if res is False or opts.dryRun:
             # If processor returns False (or we are in dry run mode), don't 
             # change the file
-            if os.path.exists(tempFspec):
-                os.remove(tempFspec)
+            if os.path.exists(temp_fspec):
+                os.remove(temp_fspec)
         elif opts.backup:
             if opts.zipBackup:
-                if os.path.exists(targetFspec):
+                if os.path.exists(target_fspec):
                     if not data.get("zipfile"):
                         data["zipfile"] = ZipFile(data["zipfile_fspec"], "w")
-                    relPath = os.path.relpath(targetFspec, data["zipfile_folder"])
-                    data["zipfile"].write(targetFspec, arcname=relPath) 
+                    relPath = os.path.relpath(target_fspec, data["zipfile_folder"])
+                    data["zipfile"].write(target_fspec, arcname=relPath) 
             else:
-                bakFilePath = "%s%s" % (targetFspec, BACKUP_SUFFIX)
+                bakFilePath = "%s%s" % (target_fspec, BACKUP_SUFFIX)
                 if os.path.exists(bakFilePath):
                     os.remove(bakFilePath)
-                if os.path.exists(targetFspec):
-                    shutil.move(targetFspec, bakFilePath)
-            shutil.move(tempFspec, targetFspec)
+                if os.path.exists(target_fspec):
+                    shutil.move(target_fspec, bakFilePath)
+            shutil.move(temp_fspec, target_fspec)
         else:
-            if os.path.exists(targetFspec):
-                os.remove(targetFspec)
-            shutil.move(tempFspec, targetFspec)
+            if os.path.exists(target_fspec):
+                os.remove(target_fspec)
+            shutil.move(temp_fspec, target_fspec)
     except Exception:
         raise
     return
 
 
-def _processPattern(path, opts, func, data):
+def _process_pattern(path, opts, func, data):
     assert opts.matchList
     assert os.path.isdir(path)
     assert not opts.targetPath
@@ -158,7 +158,7 @@ def _processPattern(path, opts, func, data):
             
             f = os.path.join(path, f)
             if os.path.isfile(f):
-                _processFile(f, opts, func, data)
+                _process_file(f, opts, func, data)
     except Exception as e:
         if opts.ignoreErrors:
             if opts.verbose >= 1:
@@ -168,17 +168,17 @@ def _processPattern(path, opts, func, data):
     return
 
 
-def _processRecursive(path, opts, func, data):
+def _process_recursive(path, opts, func, data):
     """Handle recursion or file patterns."""
     assert opts.recursive
     assert opts.matchList
     assert os.path.isdir(path)
     data["dirs_processed"] += 1
-    _processPattern(path, opts, func, data)
+    _process_pattern(path, opts, func, data)
     for root, dirnames, _filenames in os.walk(path):
         for dirname in dirnames:
             data["dirs_processed"] += 1
-            _processPattern(os.path.join(root, dirname), opts, func, data)
+            _process_pattern(os.path.join(root, dirname), opts, func, data)
     return
 
 
@@ -191,24 +191,24 @@ def process(args, opts, func, data):
     data.setdefault("exceptions", 0)
     data.setdefault("dirs_processed", 1)
     if opts.zipBackup:
-        zipFolder = os.path.abspath(args[0]) 
-        assert os.path.isdir(zipFolder) 
-        zipFspec = os.path.join(zipFolder, 
+        zip_folder = os.path.abspath(args[0]) 
+        assert os.path.isdir(zip_folder) 
+        zip_fspec = os.path.join(zip_folder, 
                                 "backup_%s.zip" 
                                 % datetime.now().strftime("%Y%m%d-%H%M%S"))
-        data["zipfile_folder"] = zipFolder
-        data["zipfile_fspec"] = zipFspec
+        data["zipfile_folder"] = zip_folder
+        data["zipfile_fspec"] = zip_fspec
     start = time.clock()
     
     if opts.recursive:
         assert len(args) == 1
-        _processRecursive(args[0], opts, func, data)
+        _process_recursive(args[0], opts, func, data)
     elif opts.matchList:
         assert len(args) == 1
-        _processPattern(args[0], opts, func, data)
+        _process_pattern(args[0], opts, func, data)
     else:
         for f in args:
-            _processFile(f, opts, func, data)
+            _process_file(f, opts, func, data)
 
     if data.get("zipfile"):
         data["zipfile"].close()
@@ -224,7 +224,7 @@ def process(args, opts, func, data):
 
 
 
-def addCommonOptions(parser):
+def add_common_options(parser):
     """Return a valid options object.
     @param parser: OptionParser
     """
@@ -274,7 +274,7 @@ def addCommonOptions(parser):
 
 
 
-def checkCommonOptions(parser, options, args):
+def check_common_options(parser, options, args):
     """Validate common options."""
 #    if len(args) != 1:
 #        parser.error("expected exactly one source file or folder")
@@ -328,7 +328,7 @@ def checkCommonOptions(parser, options, args):
 #===============================================================================
 # Sample processor
 #===============================================================================
-def piggify(fspec, targetFspec, opts, data):
+def piggify(fspec, target_fspec, opts, data):
     """Sample file processor."""
     pass
 
@@ -345,13 +345,13 @@ def test():
                       metavar="COUNT",
                       help="number of '.' to prepend (default: %default)")
 
-    addCommonOptions(parser)
+    add_common_options(parser)
     
     # Parse command line
     (options, args) = parser.parse_args()
 
     # Check syntax  
-    checkCommonOptions(parser, options, args)
+    check_common_options(parser, options, args)
 
     try:
         count = int(options.count)

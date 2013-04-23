@@ -12,14 +12,14 @@ Cloned on GitHub from the Google Code version
 
 ### Done
   - Support for Python 2.6+ and 3.2+
-  - `-i`, `--ignore` option was added to allow exclusion patterns.
   - `-x`, `--execute` option was removed. It is now on by default.
     Use `--dry-run` to force simulation mode.
+  - `--no-backup` option was removed. It is now on by default.
+    Use `-b` to enable backups.
+  - `-i`, `--ignore` option was added to allow exclusion patterns.
   - Verbositiy was changed. By default only changed files will be printed.
 
 ### Planned
-  - `--no-backup` option was removed. It is now on by default.
-    Use `-b` to enable backups.
   - `-m` option now accepts a comma separated list of extensions.
   - Multiple target folders may be passed
   - PEP 8

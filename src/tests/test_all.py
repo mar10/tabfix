@@ -106,7 +106,7 @@ class TestBasic(unittest.TestCase):
         opts.zipBackup = False
                 
         data = {}
-        cmd_walker.process(args, opts, main.fixTabs, data)
+        cmd_walker.process(args, opts, main.fix_tabs, data)
         self.assertEqual(data.get("files_processed"), 10)
         self.assertEqual(data.get("files_modified"), 5)
         self.assertEqual(data.get("lines_modified"), 125)
@@ -137,7 +137,7 @@ class TestBasic(unittest.TestCase):
         opts.zipBackup = False
         
         data = {}
-        cmd_walker.process(args, opts, main.fixTabs, data)
+        cmd_walker.process(args, opts, main.fix_tabs, data)
         self.assertEqual(data.get("files_processed"), 10)
         self.assertEqual(data.get("files_modified"), 8)
         self.assertEqual(data.get("lines_modified"), 154)
@@ -157,7 +157,7 @@ class TestBasic(unittest.TestCase):
         opts.tabbify = False
         
         data = {}
-        cmd_walker.process(args, opts, main.fixTabs, data)
+        cmd_walker.process(args, opts, main.fix_tabs, data)
         
         # Note: if this fails with '9 != 8', there might be a '.DS_Store' 
         # in 'test_files.zip':
@@ -172,7 +172,7 @@ class TestBasic(unittest.TestCase):
         opts.recursive = True
         
         data = {}
-        cmd_walker.process(args, opts, main.fixTabs, data)
+        cmd_walker.process(args, opts, main.fix_tabs, data)
         
         self.assertEqual(data.get("files_processed"), 22)
 
@@ -185,7 +185,7 @@ class TestBasic(unittest.TestCase):
         opts.recursive = True
         
         data = {}
-        cmd_walker.process(args, opts, main.fixTabs, data)
+        cmd_walker.process(args, opts, main.fix_tabs, data)
         
         self.assertEqual(data.get("files_processed"), 16)
 
