@@ -235,6 +235,11 @@ def fix_tabs(fspec, target_fspec, opts, data):
     target_size = os.path.getsize(target_fspec)
     increment_data(data, "bytes_read", src_size)
     increment_data(data, "bytes_written", target_size)
+    if modified:
+        increment_data(data, "bytes_written_if", target_size)
+    else:
+        increment_data(data, "bytes_written_if", src_size)
+    increment_data(data, "lines_processed", len(lines))
     increment_data(data, "lines_modified", changed_lines)
     
     if modified:
@@ -298,13 +303,24 @@ def run():
         
     if options.verbose >= 2:
         print() 
-        print(("Modified %s/%s files in %s folders (elap %s)" 
-              % (data["files_modified"], data["files_processed"], 
-                 data["dirs_processed"], data["elapsed_string"]))) 
+        print("Modified %d/%d lines, %d/%d files in %d folders, skipped: %d" 
+              % (data["lines_modified"], data["lines_processed"],
+                 data["files_modified"], data["files_processed"], 
+                 data["dirs_processed"], data["files_skipped"],
+                 ))
+        
+        if data["bytes_read"]:
+            rate = 100.0 * float(data["bytes_written_if"] - data["bytes_read"]) / data["bytes_read"]
+        else:
+            rate = 0  
+        
+        print("         %d bytes -> %d bytes (%+d%%), elapsed: %s" 
+              % (data["bytes_read"], data["bytes_written_if"],
+                 rate, data["elapsed_string"]))
+#        print(data)
 
     if options.dryRun and options.verbose >= 2:
-        print("\n*** Dry-run mode: no files have been modified!\n"
-              "*** Use -x or --execute to process files.")
+        print("\n*** Dry-run mode: no files have been modified! ***\n")
 
 
 if __name__ == "__main__":

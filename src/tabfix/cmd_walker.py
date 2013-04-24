@@ -189,7 +189,12 @@ def process(args, opts, func, data):
     data.setdefault("files_modified", 0)
     data.setdefault("files_skipped", 0)
     data.setdefault("exceptions", 0)
-    data.setdefault("dirs_processed", 1)
+    data.setdefault("dirs_processed", 0)
+    data.setdefault("lines_processed", 0)
+    data.setdefault("lines_modified", 0)
+    data.setdefault("bytes_read", 0)
+    data.setdefault("bytes_written", 0)   # count 0 for unmodified files 
+    data.setdefault("bytes_written_if", 0) # count full bytes for unmodified files
     if opts.zipBackup:
         zip_folder = os.path.abspath(args[0]) 
         assert os.path.isdir(zip_folder) 
@@ -207,6 +212,7 @@ def process(args, opts, func, data):
             _process_recursive(path, opts, func, data)
     elif opts.matchList:
         assert len(args) == 1
+        data["dirs_processed"] += 1
         _process_pattern(args[0], opts, func, data)
     else:
         for f in args:
@@ -267,7 +273,7 @@ def add_common_options(parser):
                       help="increment verbosity to 4 (use -vv for 5, ...)")    
     parser.add_option("", "--zip-backup",
                       action="store_true", dest="zipBackup", default=False,
-                      help="add backups of modified files to a zip-file")
+                      help="add backups of modified files to a zip-file (implies -b)")
     parser.add_option("", "--ignore-errors",
                       action="store_true", dest="ignoreErrors", default=False,
                       help="ignore errors during processing")
@@ -282,20 +288,22 @@ def check_common_options(parser, options, args):
 #        parser.error("expected exactly one source file or folder")
 
     # allow multiple patterns in one -m option (separated by ',')
-    match_list =  []
-    for matches in options.matchList:
-        for pattern in matches.split(","):
-            if not pattern in match_list:
-                match_list.append(pattern)
-    options.matchList = match_list
+    if options.matchList:
+        match_list =  []
+        for matches in options.matchList:
+            for pattern in matches.split(","):
+                if not pattern in match_list:
+                    match_list.append(pattern)
+        options.matchList = match_list
     
     # allow multiple patterns in one -i option (separated by ',')
-    match_list =  []
-    for matches in options.ignoreList:
-        for pattern in matches.split(","):
-            if not pattern in match_list:
-                match_list.append(pattern)
-    options.ignoreList = match_list
+    if options.ignoreList:
+        match_list =  []
+        for matches in options.ignoreList:
+            for pattern in matches.split(","):
+                if not pattern in match_list:
+                    match_list.append(pattern)
+        options.ignoreList = match_list
     
     # TODO:
 #    if options.quiet and options.verbose:
@@ -308,6 +316,9 @@ def check_common_options(parser, options, args):
         options.verbose = max(0, options.verbose - options.verboseDecrement)
     del options.verboseDecrement
 
+    # --zip-backup implies -b
+    if options.zipBackup:
+        options.backup = True
          
     if len(args) < 1:
         parser.error("missing required PATH")
