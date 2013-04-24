@@ -2,23 +2,36 @@
 
 Copyright (c) 2010, 2013 Martin Wendt
 
-=== Status ===
+## Note
+
+**Note 1**
+
+The command line options have changed since release 0.1.x! 
+Read [CHANGES.md](https://github.com/mar10/tabfix/blob/master/CHANGES.md) for details!
+
+
+**Note 2**
+
+This is a dangerous tool, since it will change a lot of text files in short time.  
+It is recommended to use the dry-run option `-d` to test-run your script.  
+You should also consider using the `--zip-backup`.
+
+
+## Status
+
 *This project has beta status: use at your own risk!*
 
 Please submit bugs as you find them.
 
-This GitHub version is an exploration clone of the original project on Google Code:
+This GitHub version is an exploration branch of the original project on Google Code:
 
-https://code.google.com/p/tabfix/
+    https://code.google.com/p/tabfix/
 
 (It may or may not replace the original code some time later.)
 
-**Note**: the command line options have changed!  
-**Read [CHANGES.md](https://github.com/mar10/tabfix/blob/master/CHANGES.md) for details!**
 
-**It is recommended to use the dry-run option `-d` to test-run your script.**
+## Summary
 
-=== Summary ===
 Cleanup whitespace in text files:
 
   * Unify indentation by replacing leading tabs with spaces (or vice versa)
@@ -27,7 +40,7 @@ Cleanup whitespace in text files:
   * Unify line delimiters to Unix, Windows, or Mac style
   * Optionally change indentation depth
 
-=== Usage ===
+## Usage
 *Preconditions:* [http://www.python.org/download/ Python] is required, 
 [http://pypi.python.org/pypi/setuptools#using-setuptools-and-easyinstall EasyInstall]
 recommended. 
