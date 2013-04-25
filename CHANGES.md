@@ -4,7 +4,7 @@ tabfix changes
 
 Cleanup whitespace in text files.
 
-## 2.0.0
+## 0.2.0
 Cloned on GitHub from the Google Code version 
 
 **Note**: the command line options have changed!  

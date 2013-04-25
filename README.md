@@ -6,15 +6,16 @@ Copyright (c) 2010, 2013 Martin Wendt
 
 **Note 1**
 
-The command line options have changed since release 0.1.x! 
-Read [CHANGES.md](https://github.com/mar10/tabfix/blob/master/CHANGES.md) for details!
+The command line options have changed since release 0.1.x.  
+Read [CHANGES.md](https://github.com/mar10/tabfix/blob/master/CHANGES.md) for details.  
+Make sure that you check your existing shell scripts when you update!
 
 
 **Note 2**
 
-This is a dangerous tool, since it will change a lot of text files in short time.  
-It is recommended to use the dry-run option `-d` to test-run your script.  
-You should also consider using the `--zip-backup`.
+This is a powerful tool that will change a lot of text files in short time.  
+It is recommended to first use the dry-run option `-d` to test-run your script.  
+You should also consider using the `--zip-backup` option.
 
 
 ## Status
@@ -23,11 +24,6 @@ You should also consider using the `--zip-backup`.
 
 Please submit bugs as you find them.
 
-This GitHub version is an exploration branch of the original project on Google Code:
-
-    https://code.google.com/p/tabfix/
-
-(It may or may not replace the original code some time later.)
 
 
 ## Summary
@@ -41,14 +37,15 @@ Cleanup whitespace in text files:
   * Optionally change indentation depth
 
 ## Usage
-*Preconditions:* [http://www.python.org/download/ Python] is required, 
-[http://pypi.python.org/pypi/setuptools#using-setuptools-and-easyinstall EasyInstall]
+*Preconditions:* [Python](http://www.python.org/download/) is required, 
+[pip](http://www.pip-installer.org/en/latest/) or
+[EasyInstall](http://pypi.python.org/pypi/setuptools#using-setuptools-and-easyinstall)
 recommended. 
 
 Install like this:
 
 ```
-$sudo easy_install -U tabfix
+$sudo pip -U tabfix
 ```
 
 or on Windows:

@@ -7,8 +7,9 @@ RELEASE = False
 from setuptools import setup, find_packages
 
 # Get description and __version__ without using import
-readme = open("README.md", "rt").read()
-changes = open("CHANGES.md", "rt").read()
+#readme = open("README.md", "rt").read()
+#changes = open("CHANGES.md", "rt").read()
+readme = open("readme_pypi.md", "rt").read()
 g_dict = {}
 exec(open("src/tabfix/_version.py").read(), g_dict)
 version = g_dict["__version__"]
@@ -29,14 +30,14 @@ setup(name="tabfix",
       url = "https://github.com/mar10/tabfix",
       description = "Cleanup whitespace in text files",
 #      long_description = main.__doc__,
-      long_description = readme + "\n\n" + changes,
+      long_description = readme,# + "\n\n" + changes,
 
         #Development Status :: 2 - Pre-Alpha
         #Development Status :: 3 - Alpha
         #Development Status :: 4 - Beta
         #Development Status :: 5 - Production/Stable
 
-      classifiers = ["Development Status :: 2 - Pre-Alpha",
+      classifiers = ["Development Status :: 4 - Beta",
                      "Environment :: Console",
                      "Intended Audience :: Information Technology",
                      "Intended Audience :: Developers",
@@ -48,7 +49,6 @@ setup(name="tabfix",
                      "Topic :: Utilities",
                      ],
       keywords = "python indentation development tab spaces tool", 
-#      platforms=["Unix", "Windows"],
       license = "The MIT License",
       package_dir = {"": "src"},
       packages = find_packages(exclude=["ez_setup", ]),
