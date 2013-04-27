@@ -13,7 +13,7 @@ import shutil
 import sys
 from tabfix import main, cmd_walker
 from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
-import subprocess
+#import subprocess
 #import StringIO
 #IS_PY3 = (sys.version_info[0] >= 3) 
 

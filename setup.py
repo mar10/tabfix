@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 #changes = open("CHANGES.md", "rt").read()
 readme = open("readme_pypi.md", "rt").read()
 g_dict = {}
-exec(open("src/tabfix/_version.py").read(), g_dict)
+exec(open("tabfix/_version.py").read(), g_dict)
 version = g_dict["__version__"]
 
 # 'setup.py upload' fails on Vista, because .pypirc is searched on 'HOME' path
@@ -50,8 +50,9 @@ setup(name="tabfix",
                      ],
       keywords = "python indentation development tab spaces tool", 
       license = "The MIT License",
-      package_dir = {"": "src"},
-      packages = find_packages(exclude=["ez_setup", ]),
+#      package_dir = {"": "src"},
+#      packages = find_packages(exclude=["ez_setup", ]),
+      packages = ["tabfix"],
       
 #      package_data={"": ["*.txt", "*.html", "*.conf"]},
       include_package_data = True, 
