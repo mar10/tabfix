@@ -20,20 +20,20 @@ from ._version import __version__
 import sys
 
 
-#IS_PY3 = sys.version_info[0] >= 3
 IS_PY2 = sys.version_info[0] < 3
+IS_PY3 = not IS_PY2
 
 DELIM_CR = b"\r"
 DELIM_LF = b"\n"
 DELIM_CRLF = b"\r\n"
 
 _SEPARATOR_MAP = {
-    "CR": chr(13),
-    "MAC": chr(13),
-    "LF": chr(10),
-    "UNIX": chr(10),
-    "CRLF": chr(13) + chr(10),
-    "WINDOWS": chr(13) + chr(10),
+    "CR": DELIM_CR, #chr(13),
+    "MAC": DELIM_CR, #chr(13),
+    "LF": DELIM_LF, #chr(10),
+    "UNIX": DELIM_LF, #chr(10),
+    "CRLF": DELIM_CRLF, #chr(13) + chr(10),
+    "WINDOWS": DELIM_CRLF, #chr(13) + chr(10),
     }
 
 
@@ -50,6 +50,8 @@ class Opts(WalkerOptions):
 
 def _hex_string(s):
     """Return string as readable hex dump for debugging."""
+    if IS_PY3:
+        return "[%s]" % ", ".join([ "x%02X" % c for c in s ])
     return "[%s]" % ", ".join([ "x%02X" % ord(c) for c in s ])
 
 
@@ -188,8 +190,8 @@ def fix_tabs(fspec, target_fspec, opts, data):
             modified = True
             changed_lines += 1
             if opts.verbose >= 5:
-                print("        #%04i: %s" % (line_no, org_line.replace(" ", ".").replace("\t", "<tab>"))) 
-                print("             : %s" % s.replace(" ", ".").replace("\t", "<tab>")) 
+                print("        #%04i: %s" % (line_no, org_line.replace(b" ", b".").replace(b"\t", b"<tab>"))) 
+                print("             : %s" % s.replace(b" ", b".").replace(b"\t", b"<tab>")) 
     
     # Line delimiter of input file (`None` if ambiguous)
     ending_types = []
@@ -211,7 +213,10 @@ def fix_tabs(fspec, target_fspec, opts, data):
         line_separator = source_line_separator
     else:
         line_separator = os.linesep
-
+        if IS_PY3:
+            line_separator = line_separator.encode("ascii")
+    assert type(line_separator) == type(b"")
+    
     if source_line_separator != line_separator:
         modified = True
         if opts.verbose >= 4:
