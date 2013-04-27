@@ -45,9 +45,12 @@ recommended.
 Install like this:
 
 ```
-$sudo pip -U tabfix
+$sudo pip install -U tabfix
 ```
-
+or
+```
+$sudo easy_install -U tabfix
+```
 or on Windows:
 ```
 >easy_install -U tabfix
@@ -109,7 +112,7 @@ Don't make backups:
 
 Fix whitespace (using 4 spaces for indentation) in two source files:
 ```
-> tabfix foo.js bar.html
+> tabfix foo.py bar.py
 ```
 
 *Example*
