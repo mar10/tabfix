@@ -10,7 +10,7 @@ Verbose modes (default: 3)
     2: errors and summary
     3: errors, changed files, and summary
     4: errors, visited files, and summary
-    5: debug output 
+    5: debug output
 """
 from __future__ import print_function
 from __future__ import absolute_import
@@ -60,7 +60,7 @@ def increment_data(data, key, inc=1):
 #===============================================================================
 class WalkerOptions(object):
     """Common options used by cmd_walker.process().
-    
+
     This object, may be used instead of command line args.
     An implementation should derive its options from this base class and call
     cmd_walker.add_common_options().
@@ -78,7 +78,7 @@ class WalkerOptions(object):
 
 
 #===============================================================================
-# Walker 
+# Walker
 #===============================================================================
 def _process_file(fspec, opts, func, data):
     fspec = os.path.abspath(fspec)
@@ -103,9 +103,9 @@ def _process_file(fspec, opts, func, data):
         except Exception:
             data["exceptions"] += 1
             raise
-        # 
+        #
         if res is False or opts.dryRun:
-            # If processor returns False (or we are in dry run mode), don't 
+            # If processor returns False (or we are in dry run mode), don't
             # change the file
             if os.path.exists(temp_fspec):
                 os.remove(temp_fspec)
@@ -115,7 +115,7 @@ def _process_file(fspec, opts, func, data):
                     if not data.get("zipfile"):
                         data["zipfile"] = ZipFile(data["zipfile_fspec"], "w")
                     relPath = os.path.relpath(target_fspec, data["zipfile_folder"])
-                    data["zipfile"].write(target_fspec, arcname=relPath) 
+                    data["zipfile"].write(target_fspec, arcname=relPath)
             else:
                 bakFilePath = "%s%s" % (target_fspec, BACKUP_SUFFIX)
                 if os.path.exists(bakFilePath):
@@ -141,7 +141,7 @@ def _process_pattern(path, opts, func, data):
             # handle --ignore
             if opts.ignoreList:
                 ignore = False
-                for m in opts.ignoreList: 
+                for m in opts.ignoreList:
                     if m and fnmatch(f, m):
                         ignore = True
                         break
@@ -149,13 +149,13 @@ def _process_pattern(path, opts, func, data):
                     continue
             # handle --match
             match = False
-            for m in opts.matchList: 
+            for m in opts.matchList:
                 if m and fnmatch(f, m):
                     match = True
                     break
             if not match:
                 continue
-            
+
             f = os.path.join(path, f)
             if os.path.isfile(f):
                 _process_file(f, opts, func, data)
@@ -193,18 +193,18 @@ def process(args, opts, func, data):
     data.setdefault("lines_processed", 0)
     data.setdefault("lines_modified", 0)
     data.setdefault("bytes_read", 0)
-    data.setdefault("bytes_written", 0)   # count 0 for unmodified files 
+    data.setdefault("bytes_written", 0)   # count 0 for unmodified files
     data.setdefault("bytes_written_if", 0) # count full bytes for unmodified files
     if opts.zipBackup:
-        zip_folder = os.path.abspath(args[0]) 
-        assert os.path.isdir(zip_folder) 
-        zip_fspec = os.path.join(zip_folder, 
-                                "backup_%s.zip" 
+        zip_folder = os.path.abspath(args[0])
+        assert os.path.isdir(zip_folder)
+        zip_fspec = os.path.join(zip_folder,
+                                "backup_%s.zip"
                                 % datetime.now().strftime("%Y%m%d-%H%M%S"))
         data["zipfile_folder"] = zip_folder
         data["zipfile_fspec"] = zip_fspec
     start = time.clock()
-    
+
     if opts.recursive:
 #        assert len(args) == 1
 #        _process_recursive(args[0], opts, func, data)
@@ -223,7 +223,7 @@ def process(args, opts, func, data):
 
     data["elapsed"] = time.clock() - start
     data["elapsed_string"] = "%.3f sec" % data["elapsed"]
-    
+
 #    if opts.dryRun and opts.verbose >= 1:
 #        print("\n*** Dry-run mode: no files have been modified!\n"
 #              " ***Use -x or --execute to process files.\n")
@@ -239,7 +239,7 @@ def add_common_options(parser):
     # 2013-04-23: replaced --execute with --dry-run
 #    parser.add_option("-x", "--execute",
 #                      action="store_false", dest="dryRun", default=True,
-#                      help="turn off the dry-run mode (which is ON by default), " 
+#                      help="turn off the dry-run mode (which is ON by default), "
 #                      "that would just print status messages but does not change "
 #                      "anything")
     parser.add_option("-d", "--dry-run",
@@ -266,11 +266,11 @@ def add_common_options(parser):
                       action="store_true", dest="backup", default=False,
                       help="create backup files (*.bak)")
     parser.add_option("-q", "--quiet",
-                      action="count", default=0, dest="verboseDecrement", 
+                      action="count", default=0, dest="verboseDecrement",
                       help="decrease verbosity to 2 (use -qq for 1, ...)")
     parser.add_option("-v", "--verbose",
                       action="count", dest="verbose", default=3,
-                      help="increment verbosity to 4 (use -vv for 5, ...)")    
+                      help="increment verbosity to 4 (use -vv for 5, ...)")
     parser.add_option("", "--zip-backup",
                       action="store_true", dest="zipBackup", default=False,
                       help="add backups of modified files to a zip-file (implies -b)")
@@ -295,7 +295,7 @@ def check_common_options(parser, options, args):
                 if not pattern in match_list:
                     match_list.append(pattern)
         options.matchList = match_list
-    
+
     # allow multiple patterns in one -i option (separated by ',')
     if options.ignoreList:
         match_list =  []
@@ -304,7 +304,7 @@ def check_common_options(parser, options, args):
                 if not pattern in match_list:
                     match_list.append(pattern)
         options.ignoreList = match_list
-    
+
     # TODO:
 #    if options.quiet and options.verbose:
 #        parser.error("options -q and -v are mutually exclusive")
@@ -319,7 +319,7 @@ def check_common_options(parser, options, args):
     # --zip-backup implies -b
     if options.zipBackup:
         options.backup = True
-         
+
     if len(args) < 1:
         parser.error("missing required PATH")
     elif options.targetPath and len(args) != 1:
@@ -344,7 +344,7 @@ def check_common_options(parser, options, args):
 #        parser.error("must specify a match pattern, if source is a folder")
 #    elif os.path.isfile(args[0]) and options.match:
 #        parser.error("must not specify a match pattern, if source is a file")
-    
+
     if options.targetPath and options.matchList:
         parser.error("-m and -o are mutually exclusive")
 
@@ -378,11 +378,11 @@ def test():
                       help="number of '.' to prepend (default: %default)")
 
     add_common_options(parser)
-    
+
     # Parse command line
     (options, args) = parser.parse_args()
 
-    # Check syntax  
+    # Check syntax
     check_common_options(parser, options, args)
 
     try:
@@ -391,11 +391,11 @@ def test():
         count = 0
     if count < 1:
         parser.error("count must be numeric and greater than 1")
-    
+
     # Call processor
     data = {}
     process(args, options, piggify, data)
-    
+
 
 
 if __name__ == "__main__":

@@ -15,16 +15,16 @@ from tabfix import main, cmd_walker
 from tabfix.main import read_text_lines, DELIM_CR, DELIM_CRLF, DELIM_LF
 #import subprocess
 #import StringIO
-#IS_PY3 = (sys.version_info[0] >= 3) 
+#IS_PY3 = (sys.version_info[0] >= 3)
 
 USE_FIXED_FOLDER = False
 
 
 class TestBasic(unittest.TestCase):
     """Basic tests.
-    
+
     Create a temp folder, extract test data there, and CWD to <temp>/test_files:
-    
+
     We have this structure:
     <temp root>/
         test_files/
@@ -35,25 +35,25 @@ class TestBasic(unittest.TestCase):
             (some text and other files)
     """
     def setUp(self):
-        # 
+        #
         if USE_FIXED_FOLDER:
             self.temp_path = os.path.join(os.path.expanduser("~"), "tabfix_test_")
             if not os.path.exists(self.temp_path):
                 os.mkdir(self.temp_path)
         else:
             self.temp_path = tempfile.mkdtemp()
-        data_path = os.path.dirname(__file__) 
+        data_path = os.path.dirname(__file__)
         zf = ZipFile(os.path.join(data_path, "test_files.zip"))
         zf.extractall(self.temp_path)
         self.prev_cwd = os.getcwd()
         os.chdir(os.path.join(self.temp_path, "test_files"))
-        
+
     def tearDown(self):
         os.chdir(self.prev_cwd)
         shutil.rmtree(self.temp_path)
-        
+
     def test_read_text_lines(self):
-        
+
         stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
         res = read_text_lines("test_cr.txt", stats)
         res = list(res)
@@ -61,7 +61,7 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(type(res[0]), type(b""))
         self.assertTrue(res[0].endswith(DELIM_CR))
         self.assertEqual(stats, { DELIM_CR: 6, DELIM_LF: 0, DELIM_CRLF: 0 })
-        
+
         stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
         res = read_text_lines("test_crlf.txt", stats)
         res = list(res)
@@ -69,7 +69,7 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(type(res[0]), type(b""))
         self.assertTrue(res[0].endswith(DELIM_CRLF))
         self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 6 })
-        
+
         stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
         res = read_text_lines("test_lf.txt", stats)
         res = list(res)
@@ -77,7 +77,7 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(type(res[0]), type(b""))
         self.assertTrue(res[0].endswith(DELIM_LF))
         self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 6, DELIM_CRLF: 0 })
-        
+
         stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
         res = read_text_lines("test_mixed.txt", stats)
         res = list(res)
@@ -85,12 +85,12 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(type(res[0]), type(b""))
         self.assertTrue(res[0].endswith(DELIM_CRLF))
         self.assertEqual(stats, { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 44 })
-        
+
     def test_spacify_txt_flat(self):
-        
+
 #        args = [self.temp_path]
         args = ["."]
-        
+
         opts = main.Opts()
         opts.backup = True
         opts.dryRun = False
@@ -104,7 +104,7 @@ class TestBasic(unittest.TestCase):
         opts.targetPath = None
         opts.verbose = 1
         opts.zipBackup = False
-                
+
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
         self.assertEqual(data.get("files_processed"), 10)
@@ -113,15 +113,15 @@ class TestBasic(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.temp_path, "test_files", "test_mixed.txt.bak")))
         # TODO: use difflib
         # http://docs.python.org/2/library/difflib.html
-        self.assertTrue(filecmp.cmp(os.path.join(self.temp_path, "test_files", "test_mixed.txt"), 
+        self.assertTrue(filecmp.cmp(os.path.join(self.temp_path, "test_files", "test_mixed.txt"),
                                     os.path.join(os.path.dirname(__file__), "test_mixed_expect_spaced.txt")))
-        
+
         # TODO: test directly using shell exec & command line
 
     def test_tabbify_txt_flat(self):
-        
+
         args = ["."]
-        
+
         opts = main.Opts()
         opts.backup = True
         opts.dryRun = False
@@ -135,7 +135,7 @@ class TestBasic(unittest.TestCase):
         opts.targetPath = None
         opts.verbose = 1
         opts.zipBackup = False
-        
+
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
         self.assertEqual(data.get("files_processed"), 10)
@@ -145,9 +145,9 @@ class TestBasic(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.temp_path, "test_files", "test_mixed.txt.bak")))
         # TODO: use difflib
         # http://docs.python.org/2/library/difflib.html
-        self.assertTrue(filecmp.cmp(os.path.join(self.temp_path, "test_files", "test_mixed.txt"), 
+        self.assertTrue(filecmp.cmp(os.path.join(self.temp_path, "test_files", "test_mixed.txt"),
                                     os.path.join(os.path.dirname(__file__), "test_mixed_expect_tabbed.txt")))
-        
+
         # TODO: test directly using shell exec & command line
 
     def test_match_all_flat(self):
@@ -155,11 +155,11 @@ class TestBasic(unittest.TestCase):
         opts = main.Opts()
         opts.matchList = ["*.*"]
         opts.tabbify = False
-        
+
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
-        
-        # Note: if this fails with '9 != 8', there might be a '.DS_Store' 
+
+        # Note: if this fails with '9 != 8', there might be a '.DS_Store'
         # in 'test_files.zip':
         self.assertEqual(data.get("files_processed"), 14)
         self.assertEqual(data.get("files_modified"), 7)
@@ -170,10 +170,10 @@ class TestBasic(unittest.TestCase):
         opts = main.Opts()
         opts.matchList = ["*.*"]
         opts.recursive = True
-        
+
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
-        
+
         self.assertEqual(data.get("files_processed"), 22)
 
 
@@ -183,18 +183,18 @@ class TestBasic(unittest.TestCase):
         opts.ignoreList = ["*.html", "*.js"]
         opts.matchList = ["*.*"]
         opts.recursive = True
-        
+
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
-        
+
         self.assertEqual(data.get("files_processed"), 16)
 
 
 #class TestShell(unittest.TestCase):
 #    """Basic tests.
-#    
+#
 #    Create a temp folder, extract test data there, and CWD to <temp>/test_files:
-#    
+#
 #    We have this structure:
 #    <temp root>/
 #        test_files/
@@ -205,29 +205,29 @@ class TestBasic(unittest.TestCase):
 #            (some text and other files)
 #    """
 #    def setUp(self):
-#        # 
+#        #
 #        if USE_FIXED_FOLDER:
 #            self.temp_path = os.path.join(os.path.expanduser("~"), "tabfix_test_")
 #            if not os.path.exists(self.temp_path):
 #                os.mkdir(self.temp_path)
 #        else:
 #            self.temp_path = tempfile.mkdtemp()
-#        data_path = os.path.dirname(__file__) 
+#        data_path = os.path.dirname(__file__)
 #        zf = ZipFile(os.path.join(data_path, "test_files.zip"))
 #        zf.extractall(self.temp_path)
 #        self.prev_cwd = os.getcwd()
 #        os.chdir(os.path.join(self.temp_path, "test_files"))
 #
-#        script_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+#        script_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
 #                                                        "..", "tabfix"))
 #        if not script_folder in sys.path:
-#            sys.path.append(script_folder) 
-#        self.script_path = os.path.abspath(os.path.join(script_folder, "main.py")) 
-#        
+#            sys.path.append(script_folder)
+#        self.script_path = os.path.abspath(os.path.join(script_folder, "main.py"))
+#
 #    def tearDown(self):
 #        os.chdir(self.prev_cwd)
 #        shutil.rmtree(self.temp_path)
-#        
+#
 #    def test_cmd_help(self):
 ##        res = subprocess.call(["tabfix", "-h"])
 #        p = subprocess.Popen(["python", self.script_path, "-h"],
@@ -235,12 +235,12 @@ class TestBasic(unittest.TestCase):
 #        out, _err = p.communicate()
 #        print(out)
 #        self.assertEqual(p.returncode, 0)
-        
+
 
 #def test_suite():
 #    """Called by 'setup.py test'."""
 #    suite = unittest.TestSuite()
-    
+
 if __name__ == "__main__":
     print(sys.version)
     unittest.main()

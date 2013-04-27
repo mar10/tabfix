@@ -57,7 +57,7 @@ def _hex_string(s):
 
 def read_text_lines(fname, newline_dict=None):
     """Read a text file as separate binary lines (works in Python 2 and 3).
-    
+
     '\r', '\n', and '\r\n' are accepted as delimiter.
 
     Return an a tuple (lines, stats) with
@@ -71,7 +71,7 @@ def read_text_lines(fname, newline_dict=None):
     # the line's content anyway, except for leading and trailing tabs and spaces).
     #
     # In Python 3 'universal newlines' mode is on by default.
-    # Lines that end with `\r\n` or `\n` are recognized even when the file 
+    # Lines that end with `\r\n` or `\n` are recognized even when the file
     # was opened in binary mode. The original line ending will be part of the line string.
     # BUT reading lines from a file will NOT recognize Mac line endings
     # (`\r`), when the file was opened in binary mode.
@@ -84,7 +84,7 @@ def read_text_lines(fname, newline_dict=None):
             ending = b""
             if line.endswith(DELIM_CRLF):
                 ending = DELIM_CRLF
-                newline_dict[DELIM_CRLF] += 1 
+                newline_dict[DELIM_CRLF] += 1
             elif line.endswith(DELIM_CR):
                 ending = DELIM_CR
                 newline_dict[DELIM_CR] += 1
@@ -100,13 +100,13 @@ def read_text_lines(fname, newline_dict=None):
                 l2 = [ l + DELIM_CR for l in line.split(DELIM_CR) ]
             else:
                 l2 = [ line + ending ]
-                
+
             for l in l2:
 #                print("%r" % l)
                 yield l
 #    print(newline_dict)
     return
-    
+
 
 #===============================================================================
 # fix_tabs
@@ -114,39 +114,39 @@ def read_text_lines(fname, newline_dict=None):
 
 def fix_tabs(fspec, target_fspec, opts, data):
     """Unify leading spaces and tabs and strip trailing whitespace.
-    
-    Caller made sure that 
+
+    Caller made sure that
     - fspec exists
     - targetFSpec does not exist.
-      In replace mode, a targetFSpec is a temp file. 
-    
-    Afterwards, if this function returns True, the caller will 
-    - Make a backup of fspec 
-    - If running in replace mode, move targetFSpec to fspec   
+      In replace mode, a targetFSpec is a temp file.
 
-    If this function returns False, or opts.dryRun is True, the caller will 
+    Afterwards, if this function returns True, the caller will
+    - Make a backup of fspec
+    - If running in replace mode, move targetFSpec to fspec
+
+    If this function returns False, or opts.dryRun is True, the caller will
     - not make a backup
-    - remove targetFSpec, if it exists  
+    - remove targetFSpec, if it exists
     """
     # Assert what cmd_walker gives us
     if not os.path.isfile(fspec):
         ValueError("Invalid source fspec: %r" % fspec)
     if os.path.exists(target_fspec):
         ValueError("Target fspec must not exist: %r" % target_fspec)
-    assert os.path.abspath(fspec) != os.path.abspath(target_fspec) 
+    assert os.path.abspath(fspec) != os.path.abspath(target_fspec)
 
 #    if opts.dryRun and opts.verbose >= 1:
 #        print "Dry-run %s" % fspec
 
     if opts.verbose >= 4:
-        print("%s" % fspec) 
+        print("%s" % fspec)
     if not is_text_file(fspec):
         if opts.verbose >= 4:
-            print("    Skipped non-text file.") 
+            print("    Skipped non-text file.")
         increment_data(data, "files_skipped")
         return False
 #    elif opts.verbose >= 4:
-#        print("Processing %s" % fspec) 
+#        print("Processing %s" % fspec)
     fspec = os.path.abspath(fspec)
     inputTabSize = opts.inputTabSize or opts.tabSize
 
@@ -190,9 +190,9 @@ def fix_tabs(fspec, target_fspec, opts, data):
             modified = True
             changed_lines += 1
             if opts.verbose >= 5:
-                print("        #%04i: %s" % (line_no, org_line.replace(b" ", b".").replace(b"\t", b"<tab>"))) 
-                print("             : %s" % s.replace(b" ", b".").replace(b"\t", b"<tab>")) 
-    
+                print("        #%04i: %s" % (line_no, org_line.replace(b" ", b".").replace(b"\t", b"<tab>")))
+                print("             : %s" % s.replace(b" ", b".").replace(b"\t", b"<tab>"))
+
     # Line delimiter of input file (`None` if ambiguous)
     ending_types = []
 #    max_ending_type = None
@@ -206,7 +206,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
         source_line_separator = ending_types[0]
     else:
         source_line_separator = None
-        
+
     if opts.lineSeparator:
         line_separator = _SEPARATOR_MAP[opts.lineSeparator.upper()]
     elif source_line_separator:
@@ -216,7 +216,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
         if IS_PY3:
             line_separator = line_separator.encode("ascii")
     assert type(line_separator) == type(b"")
-    
+
     if source_line_separator != line_separator:
         modified = True
         if opts.verbose >= 4:
@@ -235,7 +235,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
             fout.write(line_separator.join(lines))
             fout.write(line_separator)
         fout.close()
-    
+
     src_size = os.path.getsize(fspec)
     target_size = os.path.getsize(target_fspec)
     increment_data(data, "bytes_read", src_size)
@@ -246,13 +246,13 @@ def fix_tabs(fspec, target_fspec, opts, data):
         increment_data(data, "bytes_written_if", src_size)
     increment_data(data, "lines_processed", len(lines))
     increment_data(data, "lines_modified", changed_lines)
-    
+
     if modified:
         if opts.verbose >= 4:
             print("    Changed %s lines (size %s -> %s bytes)" % (changed_lines, src_size, target_size))
 #    elif opts.verbose >= 4:
 #        print("    Unmodified.")
-    
+
     # Return false, if nothing changed.
     # In this case cmd_walker discards the output file
     return modified
@@ -287,11 +287,11 @@ def run():
                       "(default: keep mode from input file)")
 
     add_common_options(parser)
-    
+
     # Parse command line
     (options, args) = parser.parse_args()
 
-    # Check syntax  
+    # Check syntax
     check_common_options(parser, options, args)
 
     if options.lineSeparator and options.lineSeparator.upper() not in list(_SEPARATOR_MAP.keys()):
@@ -300,26 +300,26 @@ def run():
     # Call processor
     data = {}
     process(args, options, fix_tabs, data)
-    
+
     # Print summary
     if options.verbose >= 3 and data.get("zipfile"):
-        print() 
+        print()
         print(("Backup archive:\n    %s" % data.get("zipfile_fspec")))
-        
+
     if options.verbose >= 2:
-        print() 
-        print("Modified %d/%d lines, %d/%d files in %d folders, skipped: %d" 
+        print()
+        print("Modified %d/%d lines, %d/%d files in %d folders, skipped: %d"
               % (data["lines_modified"], data["lines_processed"],
-                 data["files_modified"], data["files_processed"], 
+                 data["files_modified"], data["files_processed"],
                  data["dirs_processed"], data["files_skipped"],
                  ))
-        
+
         if data["bytes_read"]:
             rate = 100.0 * float(data["bytes_written_if"] - data["bytes_read"]) / data["bytes_read"]
         else:
-            rate = 0  
-        
-        print("         %d bytes -> %d bytes (%+d%%), elapsed: %s" 
+            rate = 0
+
+        print("         %d bytes -> %d bytes (%+d%%), elapsed: %s"
               % (data["bytes_read"], data["bytes_written_if"],
                  rate, data["elapsed_string"]))
 #        print(data)
