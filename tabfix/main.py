@@ -28,13 +28,15 @@ DELIM_LF = b"\n"
 DELIM_CRLF = b"\r\n"
 
 _SEPARATOR_MAP = {
-    "CR": DELIM_CR, #chr(13),
-    "MAC": DELIM_CR, #chr(13),
-    "LF": DELIM_LF, #chr(10),
-    "UNIX": DELIM_LF, #chr(10),
-    "CRLF": DELIM_CRLF, #chr(13) + chr(10),
-    "WINDOWS": DELIM_CRLF, #chr(13) + chr(10),
+    "CR": DELIM_CR,
+    "MAC": DELIM_CR,
+    "LF": DELIM_LF,
+    "UNIX": DELIM_LF,
+    "CRLF": DELIM_CRLF,
+    "WINDOWS": DELIM_CRLF,
     }
+
+
 
 
 class Opts(WalkerOptions):
@@ -45,6 +47,7 @@ class Opts(WalkerOptions):
         self.inputTabSize = None
         self.tabbify = False
         self.lineSeparator = None
+
 
 
 
@@ -77,10 +80,10 @@ def read_text_lines(fname, newline_dict=None):
     # (`\r`), when the file was opened in binary mode.
     if not newline_dict:
         newline_dict = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
-    # Don't use 'U': (default in Python 3), but would replace line endings with `\n` Python 2
+    # Don't use 'U': (default in Python 3), but would replace line endings 
+    # with `\n` Python 2
     with open(fname, "rb") as f:
         for line in f.readlines():
-#            print("%r" % line)
             ending = b""
             if line.endswith(DELIM_CRLF):
                 ending = DELIM_CRLF
@@ -102,9 +105,7 @@ def read_text_lines(fname, newline_dict=None):
                 l2 = [ line + ending ]
 
             for l in l2:
-#                print("%r" % l)
                 yield l
-#    print(newline_dict)
     return
 
 
@@ -135,9 +136,6 @@ def fix_tabs(fspec, target_fspec, opts, data):
         ValueError("Target fspec must not exist: %r" % target_fspec)
     assert os.path.abspath(fspec) != os.path.abspath(target_fspec)
 
-#    if opts.dryRun and opts.verbose >= 1:
-#        print "Dry-run %s" % fspec
-
     if opts.verbose >= 4:
         print("%s" % fspec)
     if not is_text_file(fspec):
@@ -145,8 +143,6 @@ def fix_tabs(fspec, target_fspec, opts, data):
             print("    Skipped non-text file.")
         increment_data(data, "files_skipped")
         return False
-#    elif opts.verbose >= 4:
-#        print("Processing %s" % fspec)
     fspec = os.path.abspath(fspec)
     inputTabSize = opts.inputTabSize or opts.tabSize
 
@@ -247,11 +243,8 @@ def fix_tabs(fspec, target_fspec, opts, data):
     increment_data(data, "lines_processed", len(lines))
     increment_data(data, "lines_modified", changed_lines)
 
-    if modified:
-        if opts.verbose >= 4:
-            print("    Changed %s lines (size %s -> %s bytes)" % (changed_lines, src_size, target_size))
-#    elif opts.verbose >= 4:
-#        print("    Unmodified.")
+    if modified and opts.verbose >= 4:
+        print("    Changed %s lines (size %s -> %s bytes)" % (changed_lines, src_size, target_size))
 
     # Return false, if nothing changed.
     # In this case cmd_walker discards the output file
