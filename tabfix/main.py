@@ -138,7 +138,13 @@ def fix_tabs(fspec, target_fspec, opts, data):
 
     if opts.verbose >= 4:
         print("%s" % fspec)
-    if not is_text_file(fspec):
+        
+    if os.path.getsize(fspec) == 0:
+        if opts.verbose >= 4:
+            print("    Skipped zero-length file.")
+        increment_data(data, "files_skipped")
+        return False
+    elif not is_text_file(fspec):
         if opts.verbose >= 4:
             print("    Skipped non-text file.")
         increment_data(data, "files_skipped")
