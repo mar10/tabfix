@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 # Get description and __version__ without using import
 #readme = open("README.md", "rt").read()
 #changes = open("CHANGES.md", "rt").read()
-readme = open("readme_pypi.md", "rt").read()
+readme = open("readme_pypi.rst", "rt").read()
 g_dict = {}
 exec(open("tabfix/_version.py").read(), g_dict)
 version = g_dict["__version__"]
@@ -29,7 +29,6 @@ setup(name="tabfix",
       maintainer_email = "tabfix@wwwendt.de",
       url = "https://github.com/mar10/tabfix",
       description = "Cleanup whitespace in text files",
-#      long_description = main.__doc__,
       long_description = readme,# + "\n\n" + changes,
 
         #Development Status :: 2 - Pre-Alpha

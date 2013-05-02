@@ -1,5 +1,5 @@
 *.pyc
 .DS_Store
-tabfix.egg-info
+*.egg-info
 dist
 __pycache__
