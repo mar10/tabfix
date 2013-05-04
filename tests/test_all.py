@@ -30,7 +30,7 @@ class TestBasic(unittest.TestCase):
         test_files/
             sub1/
                 (some text and other files)
-            sub1/
+            sub2/
                 (some text and other files)
             (some text and other files)
     """
@@ -180,14 +180,20 @@ class TestBasic(unittest.TestCase):
     def test_match_all_recursive_ignore(self):
         args = ["."]
         opts = main.Opts()
-        opts.ignoreList = ["*.html", "*.js"]
+        opts.ignoreList = ["*.html", "*.js", "sub2"]
         opts.matchList = ["*.*"]
         opts.recursive = True
+        opts.verbose = 4
 
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
 
-        self.assertEqual(data.get("files_processed"), 16)
+        print(data)
+        self.assertEqual(data.get("files_processed"), 14)
+        self.assertEqual(data.get("files_skipped"), 5)
+        self.assertEqual(data.get("files_ignored"), 4)
+        self.assertEqual(data.get("dirs_processed"), 2)
+        self.assertEqual(data.get("dirs_ignored"), 1)
 
 
 #class TestShell(unittest.TestCase):
@@ -200,7 +206,7 @@ class TestBasic(unittest.TestCase):
 #        test_files/
 #            sub1/
 #                (some text and other files)
-#            sub1/
+#            sub2/
 #                (some text and other files)
 #            (some text and other files)
 #    """

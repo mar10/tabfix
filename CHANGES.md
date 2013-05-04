@@ -4,6 +4,12 @@ tabfix changes
 
 Cleanup whitespace in text files.
 
+## 0.2.2
+  - --ignore also works for folder names
+
+## 0.2.1
+  - Added --ignore
+
 ## 0.2.0
 Cloned on GitHub from the Google Code version 
 
