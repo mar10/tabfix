@@ -55,6 +55,21 @@ def increment_data(data, key, inc=1):
     return
 
 
+
+
+def is_matching(fspec, match_list):
+    """Return True if the name part of fspec matches the pattern (using fnmatch)."""
+    if match_list:
+        assert isinstance(match_list, (tuple, list))
+        name = os.path.basename(fspec)
+        for m in match_list:
+            if fnmatch(name, m):
+                return True
+    return False
+
+
+
+        
 #===============================================================================
 # WalkerOptions
 #===============================================================================
@@ -81,6 +96,11 @@ class WalkerOptions(object):
 # Walker
 #===============================================================================
 def _process_file(fspec, opts, func, data):
+    # handle --ignore
+    if is_matching(fspec, opts.ignoreList):
+        data["files_ignored"] += 1
+        return False
+
     fspec = os.path.abspath(fspec)
     if not os.path.isfile(fspec):
         ValueError("Invalid fspec: %s" % fspec)
@@ -101,7 +121,6 @@ def _process_file(fspec, opts, func, data):
             if res is not False:
                 data["files_modified"] += 1
         except Exception:
-            data["exceptions"] += 1
             raise
         #
         if res is False or opts.dryRun:
@@ -128,37 +147,40 @@ def _process_file(fspec, opts, func, data):
                 os.remove(target_fspec)
             shutil.move(temp_fspec, target_fspec)
     except Exception:
+        data["exceptions"] += 1
         raise
     return
 
 
-def _process_pattern(path, opts, func, data):
+
+
+def _process_folder(path, opts, func, data):
+    """Process matching files inside <path> folder (potentially recursive)."""
     assert opts.matchList
     assert os.path.isdir(path)
     assert not opts.targetPath
+
+    data["dirs_processed"] += 1
     try:
-        for f in os.listdir(path):
+        for name in os.listdir(path):
+            f = os.path.join(path, name)
+            is_file =  os.path.isfile(f)
             # handle --ignore
-            if opts.ignoreList:
-                ignore = False
-                for m in opts.ignoreList:
-                    if m and fnmatch(f, m):
-                        ignore = True
-                        break
-                if ignore:
-                    continue
-            # handle --match
-            match = False
-            for m in opts.matchList:
-                if m and fnmatch(f, m):
-                    match = True
-                    break
-            if not match:
+            if is_matching(name, opts.ignoreList):
+                if is_file:
+                    data["files_ignored"] += 1
+                else:
+                    data["dirs_ignored"] += 1
                 continue
 
-            f = os.path.join(path, f)
-            if os.path.isfile(f):
+            if is_file:
+                # handle --match (only applied to files)
+                if opts.matchList and not is_matching(name, opts.matchList):
+                    data["files_ignored"] += 1
+                    continue
                 _process_file(f, opts, func, data)
+            elif opts.recursive:
+                _process_folder(f, opts, func, data)
     except Exception as e:
         if opts.ignoreErrors:
             if opts.verbose >= 1:
@@ -168,33 +190,22 @@ def _process_pattern(path, opts, func, data):
     return
 
 
-def _process_recursive(path, opts, func, data):
-    """Handle recursion or file patterns."""
-    assert opts.recursive
-    assert opts.matchList
-    assert os.path.isdir(path)
-    data["dirs_processed"] += 1
-    _process_pattern(path, opts, func, data)
-    for root, dirnames, _filenames in os.walk(path):
-        for dirname in dirnames:
-            data["dirs_processed"] += 1
-            _process_pattern(os.path.join(root, dirname), opts, func, data)
-    return
-
-
 def process(args, opts, func, data):
     data.setdefault("elapsed", 0)
     data.setdefault("elapsed_string", "n.a.")
     data.setdefault("files_processed", 0)
     data.setdefault("files_modified", 0)
-    data.setdefault("files_skipped", 0)
-    data.setdefault("exceptions", 0)
+    data.setdefault("files_skipped", 0) # rejected by processor (e.g. binary or empty files)
+    data.setdefault("files_ignored", 0) # due to --match or --ignore
     data.setdefault("dirs_processed", 0)
+    data.setdefault("dirs_ignored", 0) # due to --ignore
     data.setdefault("lines_processed", 0)
     data.setdefault("lines_modified", 0)
     data.setdefault("bytes_read", 0)
     data.setdefault("bytes_written", 0)   # count 0 for unmodified files
     data.setdefault("bytes_written_if", 0) # count full bytes for unmodified files
+    data.setdefault("exceptions", 0)
+
     if opts.zipBackup:
         zip_folder = os.path.abspath(args[0])
         assert os.path.isdir(zip_folder)
@@ -209,11 +220,11 @@ def process(args, opts, func, data):
 #        assert len(args) == 1
 #        _process_recursive(args[0], opts, func, data)
         for path in args:
-            _process_recursive(path, opts, func, data)
+            _process_folder(path, opts, func, data)
     elif opts.matchList:
         assert len(args) == 1
-        data["dirs_processed"] += 1
-        _process_pattern(args[0], opts, func, data)
+#        data["dirs_processed"] += 1
+        _process_folder(args[0], opts, func, data)
     else:
         for f in args:
             _process_file(f, opts, func, data)
@@ -247,7 +258,7 @@ def add_common_options(parser):
                       help="dry run: just print status messages; don't change anything")
     parser.add_option("-i", "--ignore",
                       action="append", dest="ignoreList",
-                      help="skip this file name patterns (separate by ',' or repeat this option)")
+                      help="skip this file or folder name patterns (separate by ',' or repeat this option)")
     parser.add_option("-m", "--match",
                       action="append", dest="matchList",
                       help="match this file name pattern (separate by ',' or repeat this option)")

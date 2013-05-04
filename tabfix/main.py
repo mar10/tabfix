@@ -14,9 +14,9 @@ from __future__ import absolute_import
 
 from optparse import OptionParser
 import os
-from .cmd_walker import WalkerOptions, add_common_options, check_common_options,\
+from tabfix.cmd_walker import WalkerOptions, add_common_options, check_common_options,\
     process, is_text_file, increment_data
-from ._version import __version__
+from tabfix._version import __version__
 import sys
 
 
