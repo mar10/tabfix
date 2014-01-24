@@ -1,4 +1,4 @@
-# tabfix [![Build Status](https://travis-ci.org/mar10/tabfix.png?branch=master)](https://travis-ci.org/mar10/tabfix)
+# tabfix [![Build Status](https://travis-ci.org/mar10/tabfix.png?branch=master)](https://travis-ci.org/mar10/tabfix) [![Latest Version](https://pypip.in/v/tabfix/badge.png)](https://pypi.python.org/pypi/tabfix/) [![Downloads](https://pypip.in/d/tabfix/badge.png)](https://pypi.python.org/pypi/tabfix/) [![License](https://pypip.in/license/tabfix/badge.png)](https://pypi.python.org/pypi/tabfix/)
 
 Copyright (c) 2010, 2013 Martin Wendt
 
