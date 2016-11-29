@@ -1,5 +1,7 @@
 *.pyc
 .DS_Store
 *.egg-info
+.project
+.pydevproject
 dist
 __pycache__

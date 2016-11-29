@@ -1,8 +1,10 @@
 tabfix changes
 ==============
 
+## 1.0.0 (unreleased)
 
-Cleanup whitespace in text files.
+  - Release as wheel
+
 
 ## 0.2.2
   - --ignore also works for folder names
