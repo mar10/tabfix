@@ -3,6 +3,7 @@ tabfix changes
 
 ## 1.0.0 (unreleased)
 
+  - Removed `-d` option (use --dry-run instead)
   - Release as wheel
 
 

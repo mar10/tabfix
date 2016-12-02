@@ -247,13 +247,7 @@ def add_common_options(parser):
     """Return a valid options object.
     @param parser: OptionParser
     """
-    # 2013-04-23: replaced --execute with --dry-run
-#    parser.add_option("-x", "--execute",
-#                      action="store_false", dest="dryRun", default=True,
-#                      help="turn off the dry-run mode (which is ON by default), "
-#                      "that would just print status messages but does not change "
-#                      "anything")
-    parser.add_option("-d", "--dry-run",
+    parser.add_option("--dry-run",
                       action="store_true", dest="dryRun", default=False,
                       help="dry run: just print status messages; don't change anything")
     parser.add_option("-i", "--ignore",
@@ -269,10 +263,6 @@ def add_common_options(parser):
                       action="store", dest="targetPath", default=None,
                       metavar="FILENAME",
                       help="name of output file")
-    # 2013-04-23: replaced --no-backup with --backup
-#    parser.add_option("", "--no-backup",
-#                      action="store_false", dest="backup", default=True,
-#                      help="prevent creation of backup files (*.bak)")
     parser.add_option("-b", "--backup",
                       action="store_true", dest="backup", default=False,
                       help="create backup files (*.bak)")

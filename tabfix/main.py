@@ -277,7 +277,7 @@ def run():
                       "(default: target tab size)")
     parser.add_option("-t", "--tabbify",
                       action="store_true", dest="tabbify", default=False,
-                      help="uses tabs for indentation (default: use spaces")
+                      help="uses tabs for indentation (default: use spaces)")
     parser.add_option("", "--line-separator",
                       action="store", dest="lineSeparator", default=None,
                       metavar="MODE",
