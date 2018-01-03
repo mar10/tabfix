@@ -1,10 +1,9 @@
-# tabfix [![GitHub version](https://badge.fury.io/gh/mar10%2Ftabfix.svg)](https://github.com/mar10/tabfix/releases/latest)
+# tabfix 
+[![GitHub version](https://badge.fury.io/gh/mar10%2Ftabfix.svg)](https://github.com/mar10/tabfix/releases/latest)
+[![Latest Version](https://img.shields.io/pypi/v/tabfix.svg)](https://pypi.python.org/pypi/tabfix/)
+[![License](https://img.shields.io/pypi/l/tabfix.svg)](https://github.com/mar10/tabfix/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/mar10/tabfix.svg?branch=master)](https://travis-ci.org/mar10/tabfix)
 [![npm](https://img.shields.io/npm/dm/jquery.tabfix.svg)](https://www.npmjs.com/package/jquery.tabfix)
-
-Fancytree (sequel of [DynaTree 1.x](https://code.google.com/p/dynatree/)) is a
-jQuery tree view / tree grid plugin with support for keyboard, inline editing,
-filtering, checkboxes, drag'n'drop, and lazy loading.
 
 Copyright (c) 2010, 2013 Martin Wendt
 
