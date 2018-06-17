@@ -37,8 +37,6 @@ _SEPARATOR_MAP = {
     }
 
 
-
-
 class Opts(WalkerOptions):
     """Options object, may be used instead of command line args."""
     def __init__(self):
@@ -49,13 +47,11 @@ class Opts(WalkerOptions):
         self.lineSeparator = None
 
 
-
-
 def _hex_string(s):
     """Return string as readable hex dump for debugging."""
     if IS_PY3:
-        return "[%s]" % ", ".join([ "x%02X" % c for c in s ])
-    return "[%s]" % ", ".join([ "x%02X" % ord(c) for c in s ])
+        return "[%s]" % ", ".join(["x%02X" % c for c in s])
+    return "[%s]" % ", ".join(["x%02X" % ord(c) for c in s])
 
 
 def read_text_lines(fname, newline_dict=None):
@@ -79,8 +75,8 @@ def read_text_lines(fname, newline_dict=None):
     # BUT reading lines from a file will NOT recognize Mac line endings
     # (`\r`), when the file was opened in binary mode.
     if not newline_dict:
-        newline_dict = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
-    # Don't use 'U': (default in Python 3), but would replace line endings 
+        newline_dict = {DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0}
+    # Don't use 'U': (default in Python 3), but would replace line endings
     # with `\n` Python 2
     with open(fname, "rb") as f:
         for line in f.readlines():
@@ -100,18 +96,18 @@ def read_text_lines(fname, newline_dict=None):
             count_lf = line.count(DELIM_CR)
             if count_lf > 0:
                 newline_dict[DELIM_CR] += count_lf
-                l2 = [ l + DELIM_CR for l in line.split(DELIM_CR) ]
+                l2 = [l + DELIM_CR for l in line.split(DELIM_CR)]
             else:
-                l2 = [ line + ending ]
+                l2 = [line + ending]
 
             for l in l2:
                 yield l
     return
 
 
-#===============================================================================
+# ===============================================================================
 # fix_tabs
-#===============================================================================
+# ==============================================================================
 
 def fix_tabs(fspec, target_fspec, opts, data):
     """Unify leading spaces and tabs and strip trailing whitespace.
@@ -125,7 +121,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
     - Make a backup of fspec
     - If running in replace mode, move targetFSpec to fspec
 
-    If this function returns False, or opts.dryRun is True, the caller will
+    If this function returns False, or opts.dry_run is True, the caller will
     - not make a backup
     - remove targetFSpec, if it exists
     """
@@ -138,7 +134,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
 
     if opts.verbose >= 4:
         print("%s" % fspec)
-        
+
     if os.path.getsize(fspec) == 0:
         if opts.verbose >= 4:
             print("    Skipped zero-length file.")
@@ -157,7 +153,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
     line_no = 0
     changed_lines = 0
     # Read lines as binary strings (keeping original endings)
-    stats = { DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0 }
+    stats = {DELIM_CR: 0, DELIM_LF: 0, DELIM_CRLF: 0}
     for line in read_text_lines(fspec, stats):
         line_no += 1
         # Note: this strips '\r' and/or '\n'
@@ -171,10 +167,10 @@ def fix_tabs(fspec, target_fspec, opts, data):
             # Python 3 returns int, Python 2 returns str
             if IS_PY2:
                 c = ord(c)
-            if c in (32, 160): # Space, shift-space
+            if c in (32, 160):  # Space, shift-space
                 chars += 1
                 indent += 1
-            elif c == 9: # TAB
+            elif c == 9:  # TAB
                 chars += 1
                 # Use integer division '//' (Py3k)
                 indent = inputTabSize * ((indent + inputTabSize) // inputTabSize)
@@ -217,7 +213,7 @@ def fix_tabs(fspec, target_fspec, opts, data):
         line_separator = os.linesep
         if IS_PY3:
             line_separator = line_separator.encode("ascii")
-    assert type(line_separator) == type(b"")
+    assert type(line_separator) is type(b"")  # noqa E721
 
     if source_line_separator != line_separator:
         modified = True
@@ -257,12 +253,10 @@ def fix_tabs(fspec, target_fspec, opts, data):
     return modified
 
 
-
-
 def run():
     # Create option parser for common and custom options
     parser = OptionParser(usage="usage: %prog [options] [PATH]",
-                          prog="tabfix", # Otherwise 'tabfix-script.py' gets displayed
+                          prog="tabfix",  # Otherwise 'tabfix-script.py' gets displayed
                           version=__version__,
                           epilog="See also https://github.com/mar10/tabfix")
 
@@ -323,7 +317,7 @@ def run():
                  rate, data["elapsed_string"]))
 #        print(data)
 
-    if options.dryRun and options.verbose >= 2:
+    if options.dry_run and options.verbose >= 2:
         print("\n*** Dry-run mode: no files have been modified! ***\n")
 
 

@@ -88,22 +88,22 @@ class TestBasic(unittest.TestCase):
 
     def test_spacify_txt_flat(self):
 
-#        args = [self.temp_path]
+        # args = [self.temp_path]
         args = ["."]
 
         opts = main.Opts()
         opts.backup = True
-        opts.dryRun = False
-        opts.ignoreList = None
+        opts.dry_run = False
+        opts.ignore_list = None
         opts.inputTabSize = None
         opts.lineSeparator = None
-        opts.matchList = ["*.txt"]
+        opts.match_list = ["*.txt"]
         opts.recursive = False
         opts.tabbify = False
         opts.tabSize = 4
-        opts.targetPath = None
+        opts.target_path = None
         opts.verbose = 1
-        opts.zipBackup = False
+        opts.zip_backup = False
 
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
@@ -124,17 +124,17 @@ class TestBasic(unittest.TestCase):
 
         opts = main.Opts()
         opts.backup = True
-        opts.dryRun = False
-        opts.ignoreList = None
+        opts.dry_run = False
+        opts.ignore_list = None
         opts.inputTabSize = None
         opts.lineSeparator = None
-        opts.matchList = ["*.txt"]
+        opts.match_list = ["*.txt"]
         opts.recursive = False
         opts.tabbify = True
         opts.tabSize = 4
-        opts.targetPath = None
+        opts.target_path = None
         opts.verbose = 1
-        opts.zipBackup = False
+        opts.zip_backup = False
 
         data = {}
         cmd_walker.process(args, opts, main.fix_tabs, data)
@@ -153,7 +153,7 @@ class TestBasic(unittest.TestCase):
     def test_match_all_flat(self):
         args = ["."]
         opts = main.Opts()
-        opts.matchList = ["*.*"]
+        opts.match_list = ["*.*"]
         opts.tabbify = False
 
         data = {}
@@ -164,11 +164,10 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(data.get("files_processed"), 14)
         self.assertEqual(data.get("files_modified"), 7)
 
-
     def test_match_all_recursive(self):
         args = ["."]
         opts = main.Opts()
-        opts.matchList = ["*.*"]
+        opts.match_list = ["*.*"]
         opts.recursive = True
 
         data = {}
@@ -176,12 +175,11 @@ class TestBasic(unittest.TestCase):
 
         self.assertEqual(data.get("files_processed"), 22)
 
-
     def test_match_all_recursive_ignore(self):
         args = ["."]
         opts = main.Opts()
-        opts.ignoreList = ["*.html", "*.js", "sub2"]
-        opts.matchList = ["*.*"]
+        opts.ignore_list = ["*.html", "*.js", "sub2"]
+        opts.match_list = ["*.*"]
         opts.recursive = True
         opts.verbose = 4
 
